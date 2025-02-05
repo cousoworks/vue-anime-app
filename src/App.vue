@@ -111,7 +111,7 @@ export default {
       }));
     },
     truncateDescription(description) {
-      const truncated = description.slice(0, 200) + "...";
+      const truncated = description.slice(0, 70) + "...";
       return truncated;
     },
     redirectToKitsu(url) {
@@ -233,5 +233,53 @@ h1 {
   width: 80%;
   height: auto;
   border-radius: 10px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 22px;
+    padding: 12px;
+  }
+
+  #app {
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  .anime-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    justify-content: center;
+    padding: 5px;
+  }
+
+  .anime-card {
+    width: 90%;
+    max-width: 150px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    
+  }
+  .anime-info {
+  padding: 2px;
+}
+
+  .anime-info p {
+    font-size: 10px; /* Aumentar el tamaño del texto */
+    max-height: 20px; /* Eliminar la restricción de altura */
+    overflow: visible; /* Asegura que se vea todo el texto */
+    text-overflow: unset;
+    white-space: normal; /* Permite saltos de línea */
+    text-align: center;
+  }
+  .anime-info h3 {
+  font-size: 16px;
+  color: #333;
+  
+}
 }
 </style>
