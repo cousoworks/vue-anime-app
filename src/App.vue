@@ -252,8 +252,8 @@ h1 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    justify-content: center;
-    padding: 5px;
+    justify-items: center; /* Asegura que las columnas estén centradas */
+    padding: 0 15px; /* Da espacio a los lados */
   }
 
   .anime-card {
@@ -263,24 +263,24 @@ h1 {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     padding: 5px;
-    
   }
+
   .anime-info {
-  padding: 2px;
-}
+    padding: 2px;
+  }
 
   .anime-info p {
-    font-size: 10px; /* Aumentar el tamaño del texto */
-    max-height: 20px; /* Eliminar la restricción de altura */
+    font-size: 10px; /* Aumenta el tamaño del texto */
+    max-height: 20px; /* Elimina la restricción de altura */
     overflow: visible; /* Asegura que se vea todo el texto */
     text-overflow: unset;
     white-space: normal; /* Permite saltos de línea */
     text-align: center;
   }
+
   .anime-info h3 {
-  font-size: 16px;
-  color: #333;
-  
-}
+    font-size: 16px;
+    color: #333;
+  }
 }
 </style>
