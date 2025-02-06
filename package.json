@@ -10,10 +10,8 @@
     "predeploy": "npm run build"
   },
   "dependencies": {
-    "@motionone/vue": "^10.16.4",
     "axios": "^1.7.9",
     "core-js": "^3.8.3",
-    "framer-motion": "^12.4.0",
     "vue": "^3.2.13"
   },
   "devDependencies": {

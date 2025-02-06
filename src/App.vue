@@ -1,13 +1,18 @@
 <template>
   <div id="app">
-    <h1>Los 10 animes más populares actualmente</h1>
-    <div v-if="loading" class="loading">Cargando...</div>
+    <!-- Pantalla de carga con animación -->
+    <div v-if="loading" class="loading-screen">
+      <div class="loading-bar"></div>
+    </div>
 
+    <!-- Título principal -->
+    <h1>Los 10 animes más populares actualmente</h1>
+    
     <!-- Sección de Animes Más Populares -->
     <div class="anime-category">
       <div class="anime-container">
         <div
-          v-for="anime in popularAnimes"
+          v-for="(anime, index) in popularAnimes"
           :key="anime.id"
           class="anime-card"
           @mouseover="hover = true"
@@ -23,6 +28,8 @@
               <h3>{{ anime.title }}</h3>
               <p><strong>Descripción:</strong> {{ anime.shortDescription }}</p>
             </div>
+            <!-- Icono con el número de ranking -->
+            <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
         </div>
       </div>
@@ -33,7 +40,7 @@
       <h1>Los 10 Animes más populares en emisión</h1>
       <div class="anime-container">
         <div
-          v-for="anime in airingAnimes"
+          v-for="(anime, index) in airingAnimes"
           :key="anime.id"
           class="anime-card"
           @mouseover="hover = true"
@@ -49,10 +56,13 @@
               <h3>{{ anime.title }}</h3>
               <p><strong>Descripción:</strong> {{ anime.shortDescription }}</p>
             </div>
+            <!-- Icono con el número de ranking -->
+            <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
         </div>
       </div>
     </div>
+    
     <footer>
       <p>&copy; {{ currentYear }} Blayneraptor</p>
     </footer>
@@ -74,30 +84,31 @@ export default {
   },
   mounted() {
     this.fetchAnimes();
+    this.startLoading();
   },
   methods: {
-  async fetchAnimes() {
-    try {
-      // Solicitudes a la nueva API de Kitsu para obtener los 2 grupos de animes
-      const popularResponse = await axios.get(
-        "https://kitsu.app/api/edge/trending/anime"
-      );
-      console.log("Respuesta popular:", popularResponse.data.data); // Log de la respuesta popular
+    async fetchAnimes() {
+      try {
+        // Solicitudes a la nueva API de Kitsu para obtener los 2 grupos de animes
+        const popularResponse = await axios.get(
+          "https://kitsu.app/api/edge/trending/anime"
+        );
+        console.log("Respuesta popular:", popularResponse.data.data);
 
-      const airingResponse = await axios.get(
-        "https://kitsu.app/api/edge/anime?filter[status]=current"
-      );
-      console.log("Respuesta en emisión:", airingResponse.data.data); // Log de la respuesta en emisión
+        const airingResponse = await axios.get(
+          "https://kitsu.app/api/edge/anime?filter[status]=current"
+        );
+        console.log("Respuesta en emisión:", airingResponse.data.data);
 
-      // Formatear las respuestas
-      this.popularAnimes = this.formatAnimes(popularResponse.data.data.slice(0, 10));
-      this.airingAnimes = this.formatAnimes(airingResponse.data.data.slice(0, 10));
+        // Formatear las respuestas
+        this.popularAnimes = this.formatAnimes(popularResponse.data.data.slice(0, 10));
+        this.airingAnimes = this.formatAnimes(airingResponse.data.data.slice(0, 10));
 
-      // Cambiar el estado de carga
-      this.loading = false;
-    } catch (error) {
-      console.error("Error al obtener los animes:", error);
-      this.loading = false;
+        // Cambiar el estado de carga
+        this.loading = false;
+      } catch (error) {
+        console.error("Error al obtener los animes:", error);
+        this.loading = false;
       }
     },
     formatAnimes(animes) {
@@ -107,7 +118,7 @@ export default {
         description: anime.attributes.description,
         status: anime.attributes.status,
         image: anime.attributes.posterImage.large,
-        previewVideo: anime.attributes.youtubeVideoId // Suponiendo que el video de avance está en YouTube
+        previewVideo: anime.attributes.youtubeVideoId
           ? `https://www.youtube.com/embed/${anime.attributes.youtubeVideoId}`
           : "",
         url: `https://kitsu.app/anime/${anime.id}`,
@@ -121,11 +132,81 @@ export default {
     redirectToKitsu(url) {
       window.open(url, "_blank"); // Redirige a la página del anime en Kitsu
     },
-  },
+    startLoading() {
+      setTimeout(() => {
+        this.loading = false; // Cambiar el estado de carga después de 2 segundos
+      }, 3000); // La pantalla de carga dura 3 segundos
+    }
+  }
 };
 </script>
 
 <style scoped>
+
+
+/* Fondo negro que cubre toda la pantalla */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 5s ease-in-out;
+}
+
+/* Línea que se va a expandir como una televisión */
+.loading-bar {
+  width: 0%;
+  height: 5px;
+  background-color: white;
+  animation: loadingAnimation 5s ease-out forwards; /* Animación de 3 segundos */
+}
+
+/* Animación de carga que expande la barra como una televisión */
+@keyframes loadingAnimation {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 60%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+h1 {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro para resaltar el texto */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  color: white;
+  max-width: 90%; /* Limitar el tamaño para que no se vea tan grande */
+  margin-left: auto;
+  margin-right: auto;
+
+  opacity: 0; /* Inicialmente invisible */
+  animation: fadeIn 3s ease-out forwards; /* Aplicamos la animación de desvanecimiento */
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+  0% {
+    opacity: 0; /* Comienza invisible */
+  }
+  100% {
+    opacity: 1; /* Se hace completamente visible */
+  }
+}
 /* Eliminar el margen blanco de la página */
 
 html, body {
@@ -148,24 +229,8 @@ html, body {
   padding: 0;  /* Eliminar el relleno */
 }
 
-h1 {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro para resaltar el texto */
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
-  color: white;
-  max-width: 90%; /* Limitar el tamaño para que no se vea tan grande */
-  margin-left: auto;
-  margin-right: auto;
-}
 
-.loading {
-  font-size: 24px;
-  color: #ffffff;
-}
+
 
 .anime-category {
   margin-bottom: 100px;
@@ -182,6 +247,25 @@ h1 {
   width: 100%; /* Asegura que ocupe todo el espacio disponible */
 }
 
+/* Estilos para el icono de ranking */
+.ranking-icon {
+  position: absolute;
+  top: 5px; /* Ajusta la distancia desde la parte superior */
+  left: 5px; /* Ajusta la distancia desde la parte izquierda */
+  background-color: rgba(0, 0, 0, 0.3); /* Fondo oscuro */
+  color: white;
+  border-radius: 40%; /* Forma circular */
+  width: 30px; /* Tamaño del círculo */
+  height: 30px; /* Tamaño del círculo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px; /* Tamaño de fuente */
+  font-weight: bold;
+  z-index: 10; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Ajuste para la carta del anime */
 .anime-card {
   width: calc(20% - 10px); /* Ancho de las cartas (5 columnas) en pantallas grandes */
   background-color: rgba(255, 255, 255, 0.678); /* Fondo semi-transparente */
@@ -191,7 +275,7 @@ h1 {
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
-  position: relative;
+  position: relative; /* Importante para posicionar el icono relativo */
   margin-bottom: 20px; /* Espacio entre filas */
 }
 
