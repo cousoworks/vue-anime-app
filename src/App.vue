@@ -53,6 +53,9 @@
         </div>
       </div>
     </div>
+    <footer>
+      <p>&copy; {{ currentYear }} Blayneraptor</p>
+    </footer>
   </div>
 </template>
 
@@ -66,6 +69,7 @@ export default {
       airingAnimes: [],
       loading: true,
       hover: false,
+      currentYear: new Date().getFullYear(), // Año dinámico
     };
   },
   mounted() {
@@ -127,6 +131,7 @@ export default {
 html, body {
   height: 100%;
   width: 100%;
+  overflow-x: hidden; /* Prevenir scroll lateral */
 }
 
 /* Fondo con la imagen proporcionada */
@@ -139,7 +144,7 @@ html, body {
   height: 100%;
   overflow-x: hidden; /* Eliminar desplazamiento horizontal */
   color: white; /* Asegura que el texto sea visible */
-  margin: -10px;  /* Eliminar el margen */
+  margin: -8.4px;  /* Eliminar el margen */
   padding: 0;  /* Eliminar el relleno */
 }
 
@@ -210,7 +215,7 @@ h1 {
 }
 
 .anime-info h3 {
-  font-size: 18px;
+  font-size: 20px;
   color: #333;
   margin-bottom: 10px;
 }
@@ -239,6 +244,21 @@ h1 {
   width: 80%;
   height: auto;
   border-radius: 10px;
+}
+footer {
+  
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+footer p {
+  margin: 0;
 }
 
 /* Estilos responsivos */
@@ -293,6 +313,11 @@ h1 {
     font-size: 16px;
     color: #333;
   }
+  footer {
+    position: relative; /* Asegura que esté en la parte inferior */
+    bottom: 0;
+    width: 100%;
+}
 }
 </style>
 
