@@ -124,7 +124,6 @@ export default {
 <style scoped>
 /* Eliminar el margen blanco de la página */
 
-
 html, body {
   height: 100%;
   width: 100%;
@@ -140,6 +139,8 @@ html, body {
   height: 100%;
   overflow-x: hidden; /* Eliminar desplazamiento horizontal */
   color: white; /* Asegura que el texto sea visible */
+  margin: -10px;  /* Eliminar el margen */
+  padding: 0;  /* Eliminar el relleno */
 }
 
 h1 {
@@ -158,7 +159,7 @@ h1 {
 
 .loading {
   font-size: 24px;
-  color: #333;
+  color: #ffffff;
 }
 
 .anime-category {
@@ -173,7 +174,7 @@ h1 {
 }
 
 .anime-card {
-  width: 300px;
+  width: 290px;
   background-color: rgba(255, 255, 255, 0.678); /* Fondo semi-transparente */
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
