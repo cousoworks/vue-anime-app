@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Los 10 animes más populares actualmente</h1>
+    <h1>Los 10 animes más populares actualmente xd</h1>
     <div v-if="loading" class="loading">Cargando...</div>
 
     <!-- Sección de Animes Más Populares -->
