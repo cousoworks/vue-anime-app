@@ -76,28 +76,28 @@ export default {
     this.fetchAnimes();
   },
   methods: {
-    async fetchAnimes() {
-      try {
-        // Solicitudes a la API de Kitsu para obtener los 2 grupos de animes
-        const popularResponse = await axios.get(
-          "https://kitsu.io/api/edge/trending/anime"
-        );
-        console.log("Respuesta popular:", popularResponse.data.data); // Log de la respuesta popular
+  async fetchAnimes() {
+    try {
+      // Solicitudes a la nueva API de Kitsu para obtener los 2 grupos de animes
+      const popularResponse = await axios.get(
+        "https://kitsu.app/api/edge/trending/anime"
+      );
+      console.log("Respuesta popular:", popularResponse.data.data); // Log de la respuesta popular
 
-        const airingResponse = await axios.get(
-          "https://kitsu.io/api/edge/anime?filter[status]=current"
-        );
-        console.log("Respuesta en emisión:", airingResponse.data.data); // Log de la respuesta en emisión
+      const airingResponse = await axios.get(
+        "https://kitsu.app/api/edge/anime?filter[status]=current"
+      );
+      console.log("Respuesta en emisión:", airingResponse.data.data); // Log de la respuesta en emisión
 
-        // Formatear las respuestas
-        this.popularAnimes = this.formatAnimes(popularResponse.data.data.slice(0, 10));
-        this.airingAnimes = this.formatAnimes(airingResponse.data.data.slice(0, 10));
+      // Formatear las respuestas
+      this.popularAnimes = this.formatAnimes(popularResponse.data.data.slice(0, 10));
+      this.airingAnimes = this.formatAnimes(airingResponse.data.data.slice(0, 10));
 
-        // Cambiar el estado de carga
-        this.loading = false;
-      } catch (error) {
-        console.error("Error al obtener los animes:", error);
-        this.loading = false;
+      // Cambiar el estado de carga
+      this.loading = false;
+    } catch (error) {
+      console.error("Error al obtener los animes:", error);
+      this.loading = false;
       }
     },
     formatAnimes(animes) {
@@ -110,7 +110,7 @@ export default {
         previewVideo: anime.attributes.youtubeVideoId // Suponiendo que el video de avance está en YouTube
           ? `https://www.youtube.com/embed/${anime.attributes.youtubeVideoId}`
           : "",
-        url: `https://kitsu.io/anime/${anime.id}`,
+        url: `https://kitsu.app/anime/${anime.id}`,
         shortDescription: this.truncateDescription(anime.attributes.description),
       }));
     },
