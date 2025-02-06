@@ -2,7 +2,5 @@ const { defineConfig } = require('@vue/cli-service');
 
 module.exports = defineConfig({
   transpileDependencies: true,
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/vue-anime-app/'
-    : '/'
+  publicPath: './' // Esto evita problemas de rutas en GitHub Pages
 });
