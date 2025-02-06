@@ -168,21 +168,26 @@ h1 {
 
 .anime-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  flex-wrap: wrap; /* Permite que los elementos se ajusten a varias filas */
+  justify-content: space-between; /* Ajusta el espacio entre las cartas */
+  gap: 10px; /* Espacio entre las cartas */
+  margin: 0 auto; /* Centra el contenedor en la página */
+  padding: 0 10px; /* Ajusta el relleno lateral */
+  max-width: 1400px; /* Limita el ancho máximo */
+  width: 100%; /* Asegura que ocupe todo el espacio disponible */
 }
 
 .anime-card {
-  width: 290px;
+  width: calc(20% - 10px); /* Ancho de las cartas (5 columnas) en pantallas grandes */
   background-color: rgba(255, 255, 255, 0.678); /* Fondo semi-transparente */
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   position: relative;
+  margin-bottom: 20px; /* Espacio entre filas */
 }
 
 .anime-card:hover {
@@ -250,10 +255,10 @@ h1 {
 
   .anime-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas en móvil */
     gap: 10px;
     justify-items: center; /* Asegura que las columnas estén centradas */
-    padding: 0 15px; /* Da espacio a los lados */
+    padding: 0 0px; /* Da espacio a los lados */
   }
 
   .anime-card {
@@ -261,8 +266,14 @@ h1 {
     max-width: 150px;
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
     padding: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    position: relative;
+    margin-bottom: 20px; /* Reduce la separación entre las filas */
   }
 
   .anime-info {
@@ -284,3 +295,4 @@ h1 {
   }
 }
 </style>
+
