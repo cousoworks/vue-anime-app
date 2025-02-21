@@ -1,18 +1,43 @@
 <template>
   <div id="app">
+    <!-- Barra de navegación -->
+    <header class="navbar">
+      <div class="logo">
+        <img src="@/assets/logo.png" alt="Logo" class="logo-image" />
+      </div>
+      <nav class="nav-buttons">
+        <button @click="onButtonClick('button1')">Botón 1</button>
+        <button @click="onButtonClick('button2')">Botón 2</button>
+        <button @click="onButtonClick('button3')">Botón 3</button>
+      </nav>
+    </header>
+
     <!-- Pantalla de carga con animación -->
     <div v-if="loading" class="loading-screen">
       <div class="loading-bar"></div>
     </div>
 
-    <!-- Título principal -->
-    <h1>Los 10 animes más populares actualmente</h1>
-    
-    <!-- Sección de Animes Más Populares -->
+    <!-- Imagen de portada -->
+    <div class="cover-image">
+      <img src="@/assets/cover-image.png" alt="Imagen de Portada" class="cover-image-img" />
+    </div>
+
+    <!-- Título de la lista de animes -->
+    <h1>Lista de Animes</h1>
+
+    <!-- Barra de filtrado -->
+    <div class="filter-buttons">
+      <button @click="filterAnimes('all')">Todos</button>
+      <button @click="filterAnimes('recent')">Más Recientes</button>
+      <button @click="filterAnimes('popular')">Más Populares</button>
+      <button @click="filterAnimes('airing')">En Emisión</button>
+    </div>
+
+    <!-- Sección de Animes Filtrados -->
     <div class="anime-category">
       <div class="anime-container">
         <div
-          v-for="(anime, index) in popularAnimes"
+          v-for="(anime, index) in filteredAnimes"
           :key="anime.id"
           class="anime-card"
           @mouseover="hover = true"
@@ -28,19 +53,17 @@
               <h3>{{ anime.title }}</h3>
               <p><strong>Descripción:</strong> {{ anime.shortDescription }}</p>
             </div>
-            <!-- Icono con el número de ranking -->
             <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Sección de Animes en Emisión -->
-    <div class="anime-category">
-      <h1>Los 10 Animes más populares en emisión</h1>
+    <!-- Sección de los 14 Animes más Populares en Emisión -->
+    
       <div class="anime-container">
         <div
-          v-for="(anime, index) in airingAnimes"
+          v-for="(anime, index) in popularAiringAnimes"
           :key="anime.id"
           class="anime-card"
           @mouseover="hover = true"
@@ -56,13 +79,12 @@
               <h3>{{ anime.title }}</h3>
               <p><strong>Descripción:</strong> {{ anime.shortDescription }}</p>
             </div>
-            <!-- Icono con el número de ranking -->
             <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
-        </div>
+        
       </div>
     </div>
-    
+
     <footer>
       <p>&copy; {{ currentYear }} Blayneraptor</p>
     </footer>
@@ -75,34 +97,46 @@ import axios from "axios";
 export default {
   data() {
     return {
-      popularAnimes: [],
-      airingAnimes: [],
+      allAnimes: [], // Lista de todos los animes recuperados
       loading: true,
       hover: false,
       currentYear: new Date().getFullYear(), // Año dinámico
+      filteredAnimes: [], // Lista de animes que se mostrarán según el filtro
+      popularAiringAnimes: [], // Lista de los 14 animes más populares en emisión
     };
   },
   mounted() {
     this.fetchAnimes();
-    this.startLoading();
+    this.fetchPopularAiringAnimes(); // Obtener los animes más populares en emisión al montar
   },
   methods: {
     async fetchAnimes() {
       try {
-        // Solicitudes a la nueva API de Kitsu para obtener los 2 grupos de animes
-        const popularResponse = await axios.get(
-          "https://kitsu.app/api/edge/trending/anime"
-        );
-        console.log("Respuesta popular:", popularResponse.data.data);
+        const requests = []; // Arreglo para guardar las promesas de las solicitudes
 
-        const airingResponse = await axios.get(
-          "https://kitsu.app/api/edge/anime?filter[status]=current"
-        );
-        console.log("Respuesta en emisión:", airingResponse.data.data);
+        // Haremos tres solicitudes para obtener suficientes animes (42 animes)
+        const numRequests = 3;
 
-        // Formatear las respuestas
-        this.popularAnimes = this.formatAnimes(popularResponse.data.data.slice(0, 10));
-        this.airingAnimes = this.formatAnimes(airingResponse.data.data.slice(0, 10));
+        for (let i = 0; i < numRequests; i++) {
+          requests.push(
+            axios.get(`https://kitsu.app/api/edge/anime?page[limit]=20&page[offset]=${i * 20}`)
+          );
+        }
+
+        // Esperar a que todas las solicitudes se completen
+        const responses = await Promise.all(requests);
+
+        // Combinar los resultados
+        const totalAnimes = [];
+        responses.forEach(response => {
+          totalAnimes.push(...this.formatAnimes(response.data.data));
+        });
+
+        // Guardar todos los animes
+        this.allAnimes = totalAnimes.slice(0, 42); // Asegurarse de tener solo 42 animes
+
+        // Mostrar por defecto todos los animes
+        this.filterAnimes('all');
 
         // Cambiar el estado de carga
         this.loading = false;
@@ -123,6 +157,8 @@ export default {
           : "",
         url: `https://kitsu.app/anime/${anime.id}`,
         shortDescription: this.truncateDescription(anime.attributes.description),
+        createdAt: anime.attributes.createdAt, // Añadido para filtrar por fecha
+        popularityRank: anime.attributes.popularityRank // Añadido para ordenar
       }));
     },
     truncateDescription(description) {
@@ -132,17 +168,111 @@ export default {
     redirectToKitsu(url) {
       window.open(url, "_blank"); // Redirige a la página del anime en Kitsu
     },
-    startLoading() {
-      setTimeout(() => {
-        this.loading = false; // Cambiar el estado de carga después de 2 segundos
-      }, 3000); // La pantalla de carga dura 3 segundos
+    filterAnimes(type) {
+      if (type === 'all') {
+        // Mostrar todos los animes
+        this.filteredAnimes = this.allAnimes; // Muestra todos los 42 animes
+      } else if (type === 'recent') {
+        this.filteredAnimes = [...this.allAnimes]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 14);
+      } else if (type === 'popular') {
+        this.filteredAnimes = [...this.allAnimes]
+          .sort((a, b) => a.popularityRank - b.popularityRank)
+          .slice(0, 14);
+      } else if (type === 'airing') {
+        // Mostrar los animes más populares en emisión
+        this.filteredAnimes = this.popularAiringAnimes; // Usar la lista de animes populares en emisión
+      }
+    },
+    async fetchPopularAiringAnimes() {
+      try {
+        const response = await axios.get(`https://kitsu.app/api/edge/anime?page[limit]=14&filter[status]=current&sort=popularityRank`);
+        this.popularAiringAnimes = this.formatAnimes(response.data.data); // Formatear y guardar los 14 animes más populares en emisión
+      } catch (error) {
+        console.error("Error al obtener los animes populares en emisión:", error);
+      }
+    },
+    onButtonClick(buttonName) {
+      console.log(`Se hizo clic en ${buttonName}`);
+      // Aquí puedes manejar el evento de clic según sea necesario
     }
   }
 };
 </script>
 
+
+
 <style scoped>
 
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0; /* Espacio alrededor de la barra de filtros */
+}
+
+.filter-buttons button {
+  margin: 0 10px; /* Espacio entre botones */
+  padding: 10px 15px; /* Tamaño del botón */
+  background-color: #007BFF; /* Color de fondo del botón */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+}
+
+.filter-buttons button:hover {
+  background-color: #0056b3; /* Color del botón al pasar el mouse */
+}
+
+/* Estilos para la imagen de portada */
+.cover-image {
+  display: flex;
+  justify-content: center; /* Centra la imagen horizontalmente */
+  margin: 20px 0; /* Espaciado vertical */
+}
+
+.cover-image-img {
+  width: 90rem; /* Hace que la imagen se ajuste al contenedor */
+  height: 40rem; /* Mantiene la relación de aspecto */
+}
+
+/* Estilos para la barra de navegación */
+.navbar {
+  display: flex;
+  justify-content: space-between; /* Espacio entre el logo y los botones */
+  align-items: center;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
+}
+
+.logo {
+  justify-content: flex-start;
+}
+
+.logo-image {
+  height: 80px; /* Ajusta la altura del logo según sea necesario */
+  
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px; /* Espacio entre botones */
+}
+
+.nav-buttons button {
+  padding: 10px 15px;
+  background-color: #7f26c9; /* Color de fondo de los botones */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-buttons button:hover {
+  background-color: #b1a5a9; /* Color de fondo en hover */
+}
 
 /* Fondo negro que cubre toda la pantalla */
 .loading-screen {
@@ -243,7 +373,7 @@ html, body {
   gap: 10px; /* Espacio entre las cartas */
   margin: 0 auto; /* Centra el contenedor en la página */
   padding: 0 10px; /* Ajusta el relleno lateral */
-  max-width: 1400px; /* Limita el ancho máximo */
+  max-width: 1600px; /* Limita el ancho máximo */
   width: 100%; /* Asegura que ocupe todo el espacio disponible */
 }
 
@@ -267,7 +397,7 @@ html, body {
 
 /* Ajuste para la carta del anime */
 .anime-card {
-  width: calc(20% - 10px); /* Ancho de las cartas (5 columnas) en pantallas grandes */
+  width: calc(14.2857% - 10px); /* Ancho de las cartas (5 columnas) en pantallas grandes */
   background-color: rgba(255, 255, 255, 0.678); /* Fondo semi-transparente */
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
