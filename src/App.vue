@@ -5,11 +5,6 @@
       <div class="logo">
         <img src="@/assets/logo.png" alt="Logo" class="logo-image" />
       </div>
-      <nav class="nav-buttons">
-        <button @click="onButtonClick('button1')">Botón 1</button>
-        <button @click="onButtonClick('button2')">Botón 2</button>
-        <button @click="onButtonClick('button3')">Botón 3</button>
-      </nav>
     </header>
 
     <!-- Pantalla de carga con animación -->
@@ -233,46 +228,37 @@ export default {
 }
 
 .cover-image-img {
-  width: 90rem; /* Hace que la imagen se ajuste al contenedor */
+  width: 90%; /* Hace que la imagen se ajuste al contenedor */
   height: 40rem; /* Mantiene la relación de aspecto */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  border-radius: 20px;
 }
 
 /* Estilos para la barra de navegación */
 .navbar {
   display: flex;
-  justify-content: space-between; /* Espacio entre el logo y los botones */
+  justify-content: center; /* Centra todos los elementos en la barra */
   align-items: center;
-  padding: 10px 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro */
-}
-
-.logo {
-  justify-content: flex-start;
-}
-
-.logo-image {
-  height: 80px; /* Ajusta la altura del logo según sea necesario */
+  background-color: rgba(44, 27, 27, 0); /* Fondo oscuro */
   
 }
 
-.nav-buttons {
-  display: flex;
-  gap: 15px; /* Espacio entre botones */
+.logo {
+  justify-content: center;
+  position: relative;
+  padding-top: 20px;
 }
 
-.nav-buttons button {
-  padding: 10px 15px;
-  background-color: #7f26c9; /* Color de fondo de los botones */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.logo-image {
+  height: 230px; /* Ajusta la altura del logo según sea necesario */
+  transition: all 0.3s ease; /* Suaviza la transición para el hover */
 }
 
-.nav-buttons button:hover {
-  background-color: #b1a5a9; /* Color de fondo en hover */
+.logo-image:hover {
+  transform: translateY(-5px) scale(1.15); /* Efecto de levantamiento al pasar el ratón */
 }
+
+
 
 /* Fondo negro que cubre toda la pantalla */
 .loading-screen {
