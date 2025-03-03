@@ -228,8 +228,8 @@ export default {
 }
 
 .cover-image-img {
-  width: 90%; /* Hace que la imagen se ajuste al contenedor */
-  height: 40rem; /* Mantiene la relación de aspecto */
+  width: 100rem; /* Hace que la imagen se ajuste al contenedor */
+  height: 35rem; /* Mantiene la relación de aspecto */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
   border-radius: 20px;
 }
@@ -250,7 +250,7 @@ export default {
 }
 
 .logo-image {
-  height: 230px; /* Ajusta la altura del logo según sea necesario */
+  height: 130px; /* Ajusta la altura del logo según sea necesario */
   transition: all 0.3s ease; /* Suaviza la transición para el hover */
 }
 
