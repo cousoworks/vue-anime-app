@@ -51,12 +51,6 @@
             <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Sección de los 14 Animes más Populares en Emisión -->
-    
-      <div class="anime-container">
         <div
           v-for="(anime, index) in popularAiringAnimes"
           :key="anime.id"
@@ -76,7 +70,7 @@
             </div>
             <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
-        
+        </div>
       </div>
     </div>
 
