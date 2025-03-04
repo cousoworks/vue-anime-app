@@ -1,17 +1,14 @@
 <template>
   <div id="app">
-    <header class="navbar">
-    </header>
+    <header class="navbar"></header>
 
     <!-- Imagen de portada -->
-
     <div class="cover-image">
       <img src="@/assets/cover-image.png" alt="Imagen de Portada" class="cover-image-img" />
     </div>
     <h1>Encuentra los <span class="morado">Animes</span> en tendencia</h1>
 
-     <!-- Barra de filtrado -->
-
+    <!-- Barra de filtrado -->
     <div class="filter-buttons">
       <button @click="filterAnimes('all')" data-filter-type="all">Todos</button>
       <div class="right-buttons">
@@ -21,18 +18,16 @@
       </div>
     </div>
 
-     <!-- Pantalla de carga con animación -->
-
-     <div v-if="loading" class="loading-screen">
+    <!-- Pantalla de carga con animación -->
+    <div v-if="loading" class="loading-screen">
       <div class="loading-bar"></div>
     </div>
 
-     <!-- Sección de Animes Filtrados -->
-
+    <!-- Sección de Animes Filtrados -->
     <div class="anime-category">
       <div class="anime-container">
         <div
-          v-for="(anime, index) in filteredAnimes"
+          v-for="anime in filteredAnimes"
           :key="anime.id"
           class="anime-card"
           @mouseover="hover = true"
@@ -46,12 +41,12 @@
             </div>
             <div class="anime-info">
               <h3>{{ anime.title }}</h3>
-              </div>
-            <div class="ranking-icon">{{ index + 1 }}</div>
+            </div>
           </div>
         </div>
+
         <div
-          v-for="(anime, index) in popularAiringAnimes"
+          v-for="anime in popularAiringAnimes"
           :key="anime.id"
           class="anime-card"
           @mouseover="hover = true"
@@ -65,8 +60,7 @@
             </div>
             <div class="anime-info">
               <h3>{{ anime.title }}</h3>
-              </div>
-            <div class="ranking-icon">{{ index + 1 }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -77,6 +71,7 @@
     </footer>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";
@@ -430,23 +425,6 @@ html, body {
   width: 100%; /* Asegura que ocupe todo el espacio disponible */
 }
 
-/* Estilos para el icono de ranking */
-.ranking-icon {
-  position: absolute;
-  top: 5px; /* Ajusta la distancia desde la parte superior */
-  left: 5px; /* Ajusta la distancia desde la parte izquierda */
-  background-color: rgba(0, 0, 0, 0.3); /* Fondo oscuro */
-  color: white;
-  border-radius: 40%; /* Forma circular */
-  width: 30px; /* Tamaño del círculo */
-  height: 30px; /* Tamaño del círculo */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px; /* Tamaño de fuente */
-  font-weight: bold;
-  z-index: 10; /* Asegura que esté por encima de otros elementos */
-}
 
 /* Ajuste para la carta del anime */
 .anime-card {
@@ -533,7 +511,7 @@ footer p {
 /* Estilos responsivos */
 @media (max-width: 768px) {
   h1 {
-    font-size: 25px;
+    font-size: 20px;
     padding: 12px;
   }
 
@@ -544,7 +522,7 @@ footer p {
 }
 
 .cover-image-img {
-  width: 120%; /* Hace que la imagen se ajuste al contenedor */
+  width: 130%; /* Hace que la imagen se ajuste al contenedor */
   height: auto; /* Mantiene la relación de aspecto */
 }
 
@@ -558,6 +536,8 @@ footer p {
   box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2); /* Sombra sutil */
   color: white;
   max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
+  margin: 10px;
+  padding: 10px;
 }
   #app {
     background-size: cover;
@@ -588,7 +568,7 @@ footer p {
 
 .anime-image {
   width: 100%; /* Hace que la imagen ocupe todo el ancho del contenedor */
-  height: 200px; /* Controla la altura de la imagen */
+  height: 175px; /* Controla la altura de la imagen */
   object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
   border-radius: 8px;
 }
