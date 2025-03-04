@@ -7,25 +7,19 @@
       </div>
     </header>
 
-    <!-- Pantalla de carga con animación -->
-    <div v-if="loading" class="loading-screen">
-      <div class="loading-bar"></div>
-    </div>
-
     <!-- Imagen de portada -->
     <div class="cover-image">
       <img src="@/assets/cover-image.png" alt="Imagen de Portada" class="cover-image-img" />
     </div>
 
-    <!-- Título de la lista de animes -->
-    <h1>Lista de Animes</h1>
-
     <!-- Barra de filtrado -->
     <div class="filter-buttons">
-      <button @click="filterAnimes('all')">Todos</button>
-      <button @click="filterAnimes('recent')">Más Recientes</button>
-      <button @click="filterAnimes('popular')">Más Populares</button>
-      <button @click="filterAnimes('airing')">En Emisión</button>
+      <button @click="filterAnimes('all')" data-filter-type="all">Todos</button>
+      <div class="right-buttons">
+        <button @click="filterAnimes('recent')" data-filter-type="recent">Más Recientes</button>
+        <button @click="filterAnimes('popular')" data-filter-type="popular">Más Populares</button>
+        <button @click="filterAnimes('airing')" data-filter-type="airing">En Emisión</button>
+      </div>
     </div>
 
     <!-- Sección de Animes Filtrados -->
@@ -97,6 +91,11 @@ export default {
   mounted() {
     this.fetchAnimes();
     this.fetchPopularAiringAnimes(); // Obtener los animes más populares en emisión al montar
+
+    // Añadir event listener para los botones de filtro
+    document.querySelectorAll('.filter-buttons button').forEach(button => {
+      button.addEventListener('click', this.onButtonClick);
+    });
   },
   methods: {
     async fetchAnimes() {
@@ -182,43 +181,81 @@ export default {
         console.error("Error al obtener los animes populares en emisión:", error);
       }
     },
-    onButtonClick(buttonName) {
-      console.log(`Se hizo clic en ${buttonName}`);
-      // Aquí puedes manejar el evento de clic según sea necesario
+    onButtonClick(event) {
+      // Eliminar la clase 'selected' de todos los botones
+      document.querySelectorAll('.filter-buttons button').forEach(button => {
+        button.classList.remove('selected');
+      });
+
+      // Agregar la clase 'selected' al botón clicado
+      const button = event.target;
+      button.classList.add('selected');
+      
+      // Aplica el filtro correspondiente
+      const filterType = button.getAttribute('data-filter-type'); // Si usas data-filter-type en los botones
+      this.filterAnimes(filterType); // Aplica el filtro correspondiente
     }
   }
 };
 </script>
 
 
-
 <style scoped>
 
 .filter-buttons {
   display: flex;
-  justify-content: center;
-  margin: 20px 0; /* Espacio alrededor de la barra de filtros */
+  justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
+  margin: 30px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro para resaltar el texto */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  color: white;
+  max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .filter-buttons button {
   margin: 0 10px; /* Espacio entre botones */
   padding: 10px 15px; /* Tamaño del botón */
-  background-color: #007BFF; /* Color de fondo del botón */
+  background-color: #555555; /* Color de fondo azul oscuro */
   color: white; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 5px; /* Bordes redondeados */
   cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
 }
 
 .filter-buttons button:hover {
-  background-color: #0056b3; /* Color del botón al pasar el mouse */
+  background-color: #00244d; /* Color del botón al pasar el mouse */
+  transform: scale(1.05); /* Aumenta ligeramente el tamaño del botón */
+}
+
+.filter-buttons button:active {
+  background-color: #001a33; /* Color del botón cuando está presionado */
+  transform: scale(1); /* Mantiene el tamaño original cuando se hace clic */
+}
+
+.filter-buttons button.selected {
+  background-color: #001a33; /* Azul más oscuro cuando está marcado */
+  border: 2px solid #004080; /* Borde azul claro para mostrar que está seleccionado */
+}
+
+.filter-buttons button.selected:hover {
+  background-color: #001a33; /* Mantiene el color cuando se pasa el ratón sobre el botón seleccionado */
+}
+
+.right-buttons {
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
 }
 
 /* Estilos para la imagen de portada */
 .cover-image {
   display: flex;
   justify-content: center; /* Centra la imagen horizontalmente */
-  margin: 20px 0; /* Espaciado vertical */
+  
 }
 
 .cover-image-img {
@@ -231,20 +268,17 @@ export default {
 /* Estilos para la barra de navegación */
 .navbar {
   display: flex;
-  justify-content: center; /* Centra todos los elementos en la barra */
+  justify-content: flex-start; /* Centra todos los elementos en la barra */
   align-items: center;
   background-color: rgba(44, 27, 27, 0); /* Fondo oscuro */
-  
 }
 
 .logo {
-  justify-content: center;
   position: relative;
-  padding-top: 20px;
 }
 
 .logo-image {
-  height: 130px; /* Ajusta la altura del logo según sea necesario */
+  height: 80px; /* Ajusta la altura del logo según sea necesario */
   transition: all 0.3s ease; /* Suaviza la transición para el hover */
 }
 
@@ -291,22 +325,7 @@ export default {
   }
 }
 
-h1 {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro para resaltar el texto */
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
-  color: white;
-  max-width: 90%; /* Limitar el tamaño para que no se vea tan grande */
-  margin-left: auto;
-  margin-right: auto;
 
-  opacity: 0; /* Inicialmente invisible */
-  animation: fadeIn 3s ease-out forwards; /* Aplicamos la animación de desvanecimiento */
-}
 
 /* Animación de desvanecimiento */
 @keyframes fadeIn {
@@ -332,15 +351,13 @@ html, body {
   background-image: url('@/assets/wallpaper.png');
   background-size: cover; /* Ajusta la imagen al tamaño de la pantalla */
   background-position: center;
+  background-attachment: fixed; /* Mantiene la imagen de fondo fija al hacer scroll */
   height: 100%;
   overflow-x: hidden; /* Eliminar desplazamiento horizontal */
   color: white; /* Asegura que el texto sea visible */
   margin: -8.4px;  /* Eliminar el margen */
   padding: 0;  /* Eliminar el relleno */
 }
-
-
-
 
 .anime-category {
   margin-bottom: 100px;
