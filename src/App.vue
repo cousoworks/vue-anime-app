@@ -138,22 +138,26 @@ export default {
       }
     },
     formatAnimes(animes) {
-      return animes.map((anime) => ({
-        id: anime.id,
-        title: anime.attributes.canonicalTitle,
-        description: anime.attributes.description,
-        status: anime.attributes.status,
-        image: anime.attributes.posterImage.large,
-        previewVideo: anime.attributes.youtubeVideoId
-          ? `https://www.youtube.com/embed/${anime.attributes.youtubeVideoId}`
-          : "",
-        url: `https://kitsu.app/anime/${anime.id}`,
-        shortDescription: this.truncateDescription(anime.attributes.description),
-        createdAt: anime.attributes.createdAt, // Añadido para filtrar por fecha
-        popularityRank: anime.attributes.popularityRank, // Añadido para ordenar
-        rating: anime.attributes.averageRating || "N/A" // Obtiene la valoración
-      }));
-    },
+  return animes.map((anime) => ({
+    id: anime.id,
+    title: this.truncateTitle(anime.attributes.canonicalTitle), // Limita el título a 20 caracteres
+    description: anime.attributes.description,
+    status: anime.attributes.status,
+    image: anime.attributes.posterImage.large,
+    previewVideo: anime.attributes.youtubeVideoId
+      ? `https://www.youtube.com/embed/${anime.attributes.youtubeVideoId}`
+      : "",
+    url: `https://kitsu.app/anime/${anime.id}`,
+    shortDescription: this.truncateDescription(anime.attributes.description),
+    createdAt: anime.attributes.createdAt, // Añadido para filtrar por fecha
+    popularityRank: anime.attributes.popularityRank, // Añadido para ordenar
+    rating: anime.attributes.averageRating || "N/A" // Obtiene la valoración
+  }));
+},
+truncateTitle(title) {
+  return title.length > 30 ? title.slice(0, 40) + "..." : title; // Limita el título a 20 caracteres
+},
+
     truncateDescription(description) {
       const truncated = description.slice(0, 30) + "...";
       return truncated;
@@ -217,7 +221,6 @@ h1 {
   margin-right: auto;
   opacity: 0; /* Inicialmente invisible */
   letter-spacing: 1px; /* Espaciado entre letras */
-  
   font-family: 'Poppins', sans-serif; /* Fuente moderna */
   animation: fadeIn 1s ease-out forwards, slideIn 1s ease-out forwards; /* Animación de desvanecimiento y deslizamiento */
 }
@@ -530,10 +533,32 @@ footer p {
 /* Estilos responsivos */
 @media (max-width: 768px) {
   h1 {
-    font-size: 22px;
+    font-size: 25px;
     padding: 12px;
   }
 
+  .cover-image {
+  display: flex;
+  justify-content: center; /* Centra la imagen horizontalmente */
+  margin-top: 20px;
+}
+
+.cover-image-img {
+  width: 120%; /* Hace que la imagen se ajuste al contenedor */
+  height: auto; /* Mantiene la relación de aspecto */
+}
+
+
+
+.filter-buttons {
+  display: flex;
+  justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
+  background-color: rgba(117, 21, 141, 0.158); /* Fondo oscuro para resaltar el texto */
+  border-radius: 10px;
+  box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2); /* Sombra sutil */
+  color: white;
+  max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
+}
   #app {
     background-size: cover;
     background-attachment: fixed;
@@ -541,33 +566,39 @@ footer p {
 
   .anime-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Dos columnas en móvil */
+    grid-template-columns: repeat(3, 1fr); /* Dos columnas en móvil */
     gap: 10px;
     justify-items: center; /* Asegura que las columnas estén centradas */
     padding: 0 0px; /* Da espacio a los lados */
   }
 
   .anime-card {
-    width: 90%;
-    max-width: 150px;
-    background-color: rgba(255, 255, 255, 0.6);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-    padding: 5px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-    position: relative;
-    margin-bottom: 20px; /* Reduce la separación entre las filas */
-  }
+  width: 100%; /* Asegura que la tarjeta ocupe todo el ancho disponible */
+  height: auto;
+  background: linear-gradient(to bottom, white, rgb(55, 12, 83), rgba(147, 38, 161, 0.301)); /* Gradiente blanco-morado-rosa */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  position: relative;
+  margin-bottom: 10px; /* Reduce la separación entre las filas */
+}
+
+.anime-image {
+  width: 100%; /* Hace que la imagen ocupe todo el ancho del contenedor */
+  height: 200px; /* Controla la altura de la imagen */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+  border-radius: 8px;
+}
 
   .anime-info {
-    padding: 2px;
+    font-size: 8px; /* Aumenta el tamaño del texto */
   }
 
   .anime-info p {
-    font-size: 10px; /* Aumenta el tamaño del texto */
+    font-size: 8px; /* Aumenta el tamaño del texto */
     max-height: 20px; /* Elimina la restricción de altura */
     overflow: visible; /* Asegura que se vea todo el texto */
     text-overflow: unset;
@@ -576,8 +607,9 @@ footer p {
   }
 
   .anime-info h3 {
-    font-size: 16px;
-    color: #333;
+    font-size: 13px;
+    color: #ffffff;
+    margin-bottom: 20px;
   }
   footer {
     position: relative; /* Asegura que esté en la parte inferior */
