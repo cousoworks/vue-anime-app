@@ -250,7 +250,17 @@ h1 {
 }
 
 
-/* Eliminar el margen blanco de la página */
+.search-bar {
+  text-align: center;
+  margin: 20px 0;
+}
+.search-bar input {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
 
 .filter-buttons {
   display: flex;
