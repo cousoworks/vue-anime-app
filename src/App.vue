@@ -3,14 +3,25 @@
     <header class="navbar"></header>
 
     <!-- Imagen de portada -->
-    <div class="cover-image">
-      <img src="@/assets/cover-image.png" alt="Imagen de Portada" class="cover-image-img" />
-    </div>
-    <h1>Encuentra los <span class="morado">Animes</span> en tendencia</h1>
+<div class="cover-image">
+  <img 
+    src="@/assets/cover-image.png" 
+    alt="Imagen de Portada" 
+    class="cover-image-img" 
+    @click="reloadPage"
+    style="cursor: pointer;" 
+  />
+</div>
+<h1>Encuentra los <span class="morado">Animes</span> en tendencia</h1>
+
 
     <!-- Barra de filtrado -->
     <div class="filter-buttons">
       <button @click="filterAnimes('all')" data-filter-type="all">Todos</button>
+            <!-- Barra de búsqueda -->
+    <div class="search-bar">
+      <input type="text" v-model="searchQuery" @input="searchAnimes" placeholder="Buscador de anime..." />
+    </div>
       <div class="right-buttons">
         <button @click="filterAnimes('recent')" data-filter-type="recent">Más Recientes</button>
         <button @click="filterAnimes('popular')" data-filter-type="popular">Más Populares</button>
@@ -85,6 +96,7 @@ export default {
       currentYear: new Date().getFullYear(), // Año dinámico
       filteredAnimes: [], // Lista de animes que se mostrarán según el filtro
       popularAiringAnimes: [], // Lista de los 14 animes más populares en emisión
+      searchQuery: ""
     };
   },
   mounted() {
@@ -130,6 +142,22 @@ export default {
       } catch (error) {
         console.error("Error al obtener los animes:", error);
         this.loading = false;
+      }
+    },
+    reloadPage() {
+    window.scrollTo(0, 0); // Mueve la página al inicio
+    location.reload(); // Recarga la página
+  },
+    async searchAnimes() {
+      if (!this.searchQuery.trim()) {
+        this.filterAnimes('all');
+        return;
+      }
+      try {
+        const response = await axios.get(`https://kitsu.io/api/edge/anime?filter[text]=${this.searchQuery}`);
+        this.filteredAnimes = this.formatAnimes(response.data.data);
+      } catch (error) {
+        console.error("Error al buscar el anime:", error);
       }
     },
     formatAnimes(animes) {
@@ -251,21 +279,33 @@ h1 {
 
 
 .search-bar {
-  text-align: center;
-  margin: 20px 0;
+  display: flex;
+  justify-content: flex-start; /* Alinea los elementos a la izquierda */
+  align-items: center; /* Centra verticalmente los elementos */
+  width: 100%; /* Asegura que ocupe el ancho completo del contenedor */
+  
 }
+
 .search-bar input {
-  width: 80%;
+  color: white; /* Color del texto ingresado */
+  width: 15rem;
   padding: 10px;
   font-size: 16px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #00000000;
+  background-color: rgba(178, 113, 194, 0.158); /* Fondo oscuro para resaltar el texto */
 }
+
+.search-bar input::placeholder {
+  color: white; /* Cambia el color del texto del placeholder a blanco */
+  opacity: 1; /* Asegura que el color se vea bien en algunos navegadores */
+}
+
 
 .filter-buttons {
   display: flex;
   justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
-  margin: 30px;
+  margin: 20px;
   padding: 20px;
   background-color: rgba(178, 113, 194, 0.158); /* Fondo oscuro para resaltar el texto */
   border-radius: 10px;
@@ -277,8 +317,9 @@ h1 {
 }
 
 .filter-buttons button {
+  font-size: 14px; /* Aumenta el tamaño del texto */
   margin: 0 10px; /* Espacio entre botones */
-  padding: 5px 10px; /* Tamaño del botón */
+  padding: 8px 15px; /* Ajusta el tamaño del botón */
   background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
   color: white; /* Color del texto */
   border: none; /* Sin borde */
@@ -286,6 +327,7 @@ h1 {
   cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
   transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
 }
+
 
 .filter-buttons button:hover {
   background-color: #5f0f77; /* Color del botón al pasar el mouse */
@@ -535,20 +577,70 @@ footer p {
   width: 130%; /* Hace que la imagen se ajuste al contenedor */
   height: auto; /* Mantiene la relación de aspecto */
 }
+/* Centrar la barra de búsqueda */
+.search-bar {
+  display: flex;
+  justify-content: center; /* Centra el contenido horizontalmente */
+  padding: 5px;  /* Reduce el padding */
+  border-radius: 10px;
+  
+}
+
+.search-bar input {
+  width: 80%;  /* Reduce el tamaño en móviles */
+  padding: 5px;  /* Reduce el padding */
+  font-size: 12px; /* Reduce el tamaño de fuente */
+  border-radius: 10px;
+ 
+}
 
 
-
+/* Centrar los botones de filtro */
 .filter-buttons {
   display: flex;
-  justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
+  flex-wrap: wrap; /* Permite que los botones se distribuyan en varias filas */
+  justify-content: center; /* Centra los botones horizontalmente */
   background-color: rgba(117, 21, 141, 0.158); /* Fondo oscuro para resaltar el texto */
   border-radius: 10px;
   box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2); /* Sombra sutil */
   color: white;
   max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
-  margin: 10px;
-  padding: 10px;
+  margin: 5px;
+  padding: 5px;
+  
 }
+.filter-buttons button {
+  
+  font-size: 12px; /* Aumenta el tamaño del texto */
+  margin: 0 10px; /* Espacio entre botones */
+  padding: 8px 15px; /* Ajusta el tamaño del botón */
+  background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 20px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  transition: background-color 0.3s ease, 
+}
+
+.filter-buttons button:active {
+  background-color: #4c0e64; /* Color del botón cuando está presionado */
+}
+
+.filter-buttons button.selected {
+  background-color: #500772; /* Azul más oscuro cuando está marcado */
+  border: 2px solid #c4a2c7; /* Borde azul claro para mostrar que está seleccionado */
+  font-size: 11px; /* Aumenta el tamaño del texto */
+}
+
+.filter-buttons button.selected:hover {
+  background-color: #390c4b; /* Mantiene el color cuando se pasa el ratón sobre el botón seleccionado */
+}
+
+.right-buttons {
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+}
+
   #app {
     background-size: cover;
     background-attachment: fixed;
