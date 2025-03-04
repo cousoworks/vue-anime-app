@@ -12,6 +12,12 @@
       <img src="@/assets/cover-image.png" alt="Imagen de Portada" class="cover-image-img" />
     </div>
 
+    <!-- Imagen de titulo -->
+    <div class="titulo-cover">
+      <img src="@/assets/titulo-cover.png" alt="Imagen de titulo" class="titulo-cover-img" />
+    </div>
+
+   
     <!-- Barra de filtrado -->
     <div class="filter-buttons">
       <button @click="filterAnimes('all')" data-filter-type="all">Todos</button>
@@ -202,14 +208,61 @@ export default {
 
 <style scoped>
 
+h1 {
+  font-size: 58px;
+  font-weight: 700;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  max-width: 90%; /* Limitar el tamaño para que no se vea tan grande */
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0; /* Inicialmente invisible */
+  letter-spacing: 1px; /* Espaciado entre letras */
+  
+  font-family: 'Poppins', sans-serif; /* Fuente moderna */
+  animation: fadeIn 1s ease-out forwards, slideIn 1s ease-out forwards; /* Animación de desvanecimiento y deslizamiento */
+}
+
+/* Color morado en la palabra 'Animes' */
+.morado {
+  color: #9b4dca; /* Morado vibrante */
+  font-family: 'Roboto', sans-serif; /* Fuente diferente para resaltar la palabra */
+  text-shadow: 2px 2px 8px rgba(155, 77, 202, 0.8); /* Sombra sutil para resaltar la palabra */
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* Comienza ligeramente desplazado */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Llega a su posición original */
+  }
+}
+
+/* Animación de deslizamiento para el efecto moderno */
+@keyframes slideIn {
+  0% {
+    transform: translateX(-30px); /* Desliza desde la izquierda */
+  }
+  100% {
+    transform: translateX(0); /* Llega a su posición original */
+  }
+}
+
+
+/* Eliminar el margen blanco de la página */
+
 .filter-buttons {
   display: flex;
   justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
   margin: 30px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro para resaltar el texto */
+  background-color: rgba(112, 111, 111, 0.7); /* Fondo oscuro para resaltar el texto */
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  box-shadow: 0 4px 8px rgba(92, 92, 92, 0.2); /* Sombra sutil */
   color: white;
   max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
   margin-left: auto;
@@ -218,7 +271,7 @@ export default {
 
 .filter-buttons button {
   margin: 0 10px; /* Espacio entre botones */
-  padding: 10px 15px; /* Tamaño del botón */
+  padding: 5px 10px; /* Tamaño del botón */
   background-color: #555555; /* Color de fondo azul oscuro */
   color: white; /* Color del texto */
   border: none; /* Sin borde */
@@ -259,11 +312,23 @@ export default {
 }
 
 .cover-image-img {
-  width: 100rem; /* Hace que la imagen se ajuste al contenedor */
-  height: 35rem; /* Mantiene la relación de aspecto */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
-  border-radius: 20px;
+  width: 70%; /* Hace que la imagen se ajuste al contenedor */
+  height: auto; /* Mantiene la relación de aspecto */
 }
+
+
+.titulo-cover {
+  display: flex;
+  justify-content: center; /* Centra la imagen horizontalmente */
+  
+}
+
+.titulo-cover-img {
+  width: 50%; /* Hace que la imagen se ajuste al contenedor */
+  height: auto; /* Mantiene la relación de aspecto */
+  
+}
+
 
 /* Estilos para la barra de navegación */
 .navbar {
