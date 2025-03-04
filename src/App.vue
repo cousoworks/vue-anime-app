@@ -1,24 +1,17 @@
 <template>
   <div id="app">
-    <!-- Barra de navegación -->
     <header class="navbar">
-      <div class="logo">
-        <img src="@/assets/logo.png" alt="Logo" class="logo-image" />
-      </div>
     </header>
 
     <!-- Imagen de portada -->
+
     <div class="cover-image">
       <img src="@/assets/cover-image.png" alt="Imagen de Portada" class="cover-image-img" />
     </div>
+    <h1>Encuentra los <span class="morado">Animes</span> en tendencia</h1>
 
-    <!-- Imagen de titulo -->
-    <div class="titulo-cover">
-      <img src="@/assets/titulo-cover.png" alt="Imagen de titulo" class="titulo-cover-img" />
-    </div>
+     <!-- Barra de filtrado -->
 
-   
-    <!-- Barra de filtrado -->
     <div class="filter-buttons">
       <button @click="filterAnimes('all')" data-filter-type="all">Todos</button>
       <div class="right-buttons">
@@ -28,7 +21,14 @@
       </div>
     </div>
 
-    <!-- Sección de Animes Filtrados -->
+     <!-- Pantalla de carga con animación -->
+
+     <div v-if="loading" class="loading-screen">
+      <div class="loading-bar"></div>
+    </div>
+
+     <!-- Sección de Animes Filtrados -->
+
     <div class="anime-category">
       <div class="anime-container">
         <div
@@ -46,8 +46,7 @@
             </div>
             <div class="anime-info">
               <h3>{{ anime.title }}</h3>
-              <p><strong>Descripción:</strong> {{ anime.shortDescription }}</p>
-            </div>
+              </div>
             <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
         </div>
@@ -66,8 +65,7 @@
             </div>
             <div class="anime-info">
               <h3>{{ anime.title }}</h3>
-              <p><strong>Descripción:</strong> {{ anime.shortDescription }}</p>
-            </div>
+              </div>
             <div class="ranking-icon">{{ index + 1 }}</div>
           </div>
         </div>
@@ -75,7 +73,7 @@
     </div>
 
     <footer>
-      <p>&copy; {{ currentYear }} Blayneraptor</p>
+      <p>© {{ currentYear }} Blayneraptor</p>
     </footer>
   </div>
 </template>
@@ -152,11 +150,12 @@ export default {
         url: `https://kitsu.app/anime/${anime.id}`,
         shortDescription: this.truncateDescription(anime.attributes.description),
         createdAt: anime.attributes.createdAt, // Añadido para filtrar por fecha
-        popularityRank: anime.attributes.popularityRank // Añadido para ordenar
+        popularityRank: anime.attributes.popularityRank, // Añadido para ordenar
+        rating: anime.attributes.averageRating || "N/A" // Obtiene la valoración
       }));
     },
     truncateDescription(description) {
-      const truncated = description.slice(0, 70) + "...";
+      const truncated = description.slice(0, 30) + "...";
       return truncated;
     },
     redirectToKitsu(url) {
@@ -260,9 +259,9 @@ h1 {
   justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
   margin: 30px;
   padding: 20px;
-  background-color: rgba(112, 111, 111, 0.7); /* Fondo oscuro para resaltar el texto */
+  background-color: rgba(178, 113, 194, 0.158); /* Fondo oscuro para resaltar el texto */
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(92, 92, 92, 0.2); /* Sombra sutil */
+  box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2); /* Sombra sutil */
   color: white;
   max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
   margin-left: auto;
@@ -272,31 +271,31 @@ h1 {
 .filter-buttons button {
   margin: 0 10px; /* Espacio entre botones */
   padding: 5px 10px; /* Tamaño del botón */
-  background-color: #555555; /* Color de fondo azul oscuro */
+  background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
   color: white; /* Color del texto */
   border: none; /* Sin borde */
-  border-radius: 5px; /* Bordes redondeados */
+  border-radius: 20px; /* Bordes redondeados */
   cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
   transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
 }
 
 .filter-buttons button:hover {
-  background-color: #00244d; /* Color del botón al pasar el mouse */
+  background-color: #5f0f77; /* Color del botón al pasar el mouse */
   transform: scale(1.05); /* Aumenta ligeramente el tamaño del botón */
 }
 
 .filter-buttons button:active {
-  background-color: #001a33; /* Color del botón cuando está presionado */
+  background-color: #4c0e64; /* Color del botón cuando está presionado */
   transform: scale(1); /* Mantiene el tamaño original cuando se hace clic */
 }
 
 .filter-buttons button.selected {
-  background-color: #001a33; /* Azul más oscuro cuando está marcado */
-  border: 2px solid #004080; /* Borde azul claro para mostrar que está seleccionado */
+  background-color: #500772; /* Azul más oscuro cuando está marcado */
+  border: 2px solid #c4a2c7; /* Borde azul claro para mostrar que está seleccionado */
 }
 
 .filter-buttons button.selected:hover {
-  background-color: #001a33; /* Mantiene el color cuando se pasa el ratón sobre el botón seleccionado */
+  background-color: #390c4b; /* Mantiene el color cuando se pasa el ratón sobre el botón seleccionado */
 }
 
 .right-buttons {
@@ -308,7 +307,7 @@ h1 {
 .cover-image {
   display: flex;
   justify-content: center; /* Centra la imagen horizontalmente */
-  
+  margin-top: 100px;
 }
 
 .cover-image-img {
@@ -317,17 +316,6 @@ h1 {
 }
 
 
-.titulo-cover {
-  display: flex;
-  justify-content: center; /* Centra la imagen horizontalmente */
-  
-}
-
-.titulo-cover-img {
-  width: 50%; /* Hace que la imagen se ajuste al contenedor */
-  height: auto; /* Mantiene la relación de aspecto */
-  
-}
 
 
 /* Estilos para la barra de navegación */
@@ -343,7 +331,7 @@ h1 {
 }
 
 .logo-image {
-  height: 80px; /* Ajusta la altura del logo según sea necesario */
+  height: 50px; /* Ajusta la altura del logo según sea necesario */
   transition: all 0.3s ease; /* Suaviza la transición para el hover */
 }
 
@@ -459,16 +447,18 @@ html, body {
 
 /* Ajuste para la carta del anime */
 .anime-card {
-  width: calc(14.2857% - 10px); /* Ancho de las cartas (5 columnas) en pantallas grandes */
-  background-color: rgba(255, 255, 255, 0.678); /* Fondo semi-transparente */
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+  aspect-ratio: 2 / 4; /* Ajusté la proporción a algo más pequeño */
+  width: calc(14.2857% - 20px); /* Ancho de las cartas (5 columnas), ajusté el margen */
+  background: linear-gradient(to bottom, white, rgb(55, 12, 83), rgba(147, 38, 161, 0.301)); /* Gradiente blanco-morado-rosa */
+
+  border-radius: 8px; /* Bordes más pequeños */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7); /* Sombra más sutil */
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   position: relative; /* Importante para posicionar el icono relativo */
-  margin-bottom: 20px; /* Espacio entre filas */
+  margin-bottom: 15px; /* Espacio entre filas reducido */
 }
 
 .anime-card:hover {
@@ -487,13 +477,13 @@ html, body {
 }
 
 .anime-info {
-  padding: 10px;
+  padding: 1px;
+  
 }
 
 .anime-info h3 {
   font-size: 20px;
-  color: #333;
-  margin-bottom: 10px;
+  color: #ffffff;
 }
 
 .anime-info p {
