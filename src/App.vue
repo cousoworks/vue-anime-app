@@ -563,7 +563,7 @@ footer p {
 /* Estilos responsivos */
 @media (max-width: 768px) {
   h1 {
-    font-size: 20px;
+    font-size: 24px;
     padding: 12px;
   }
 
@@ -589,7 +589,7 @@ footer p {
 .search-bar input {
   width: 80%;  /* Reduce el tamaño en móviles */
   padding: 5px;  /* Reduce el padding */
-  font-size: 12px; /* Reduce el tamaño de fuente */
+  font-size: 14px; /* Reduce el tamaño de fuente */
   border-radius: 10px;
  
 }
@@ -611,7 +611,7 @@ footer p {
 }
 .filter-buttons button {
   
-  font-size: 12px; /* Aumenta el tamaño del texto */
+  font-size: 14px; /* Reduce el tamaño de fuente */
   margin: 0 10px; /* Espacio entre botones */
   padding: 8px 15px; /* Ajusta el tamaño del botón */
   background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
@@ -629,7 +629,7 @@ footer p {
 .filter-buttons button.selected {
   background-color: #500772; /* Azul más oscuro cuando está marcado */
   border: 2px solid #c4a2c7; /* Borde azul claro para mostrar que está seleccionado */
-  font-size: 11px; /* Aumenta el tamaño del texto */
+  font-size: 14px; /* Reduce el tamaño de fuente */
 }
 
 .filter-buttons button.selected:hover {
