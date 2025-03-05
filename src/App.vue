@@ -27,6 +27,7 @@
         <button @click="filterAnimes('recent')" data-filter-type="recent">Más Recientes</button>
         <button @click="filterAnimes('popular')" data-filter-type="popular">Más Populares</button>
         <button @click="filterAnimes('airing')" data-filter-type="airing">En Emisión</button>
+        <button @click="filterAnimes('anticipated')" data-filter-type="anticipated">Mejor Valorados</button>
       </div>
     </div>
 
@@ -77,12 +78,14 @@ export default {
       currentYear: new Date().getFullYear(),
       filteredAnimes: [], // Lista filtrada según el usuario
       popularAiringAnimes: [], // Lista de los 14 animes más populares en emisión
+      anticipatedAnimes: [], // Lista de los animes más esperados
       searchQuery: ""
     };
   },
   async mounted() {
     await this.fetchAnimes();
     await this.fetchPopularAiringAnimes();
+    await this.fetchAnticipatedAnimes(); // Obtener los animes más esperados
     this.filterAnimes('all');
 
     // Añadir event listener para los botones de filtro
@@ -125,6 +128,39 @@ export default {
         console.error("Error al obtener los animes populares en emisión:", error);
       }
     },
+    async fetchAnticipatedAnimes() {
+      try {
+        const response = await axios.post('https://graphql.anilist.co', {
+          query: `
+            query {
+              Page(page: 1, perPage: 14) {
+                media(sort: POPULARITY_DESC, type: ANIME) {
+                  id
+                  title {
+                    romaji
+                    english
+                  }
+                  coverImage {
+                    large
+                  }
+                  startDate {
+                    year
+                    month
+                    day
+                  }
+                  popularity
+                  description
+                  genres
+                }
+              }
+            }`
+        });
+
+        this.anticipatedAnimes = this.formatAnimesAniList(response.data.data.Page.media);
+      } catch (error) {
+        console.error("Error al obtener los animes más esperados:", error);
+      }
+    },
     reloadPage() {
       window.scrollTo(0, 0);
       location.reload();
@@ -158,6 +194,21 @@ export default {
         rating: anime.attributes.averageRating || "N/A"
       }));
     },
+    formatAnimesAniList(animes) {
+      return animes.map((anime) => ({
+        id: anime.id,
+        title: this.truncateTitle(anime.title.romaji || anime.title.english),
+        description: anime.description || "Sin descripción",
+        status: anime.status || "Desconocido",
+        image: anime.coverImage.large,
+        previewVideo: "",  // AniList no devuelve un preview de video en la API
+        url: `https://anilist.co/anime/${anime.id}`,
+        shortDescription: this.truncateDescription(anime.description),
+        startDate: `${anime.startDate.year || "1900"}-${anime.startDate.month || "01"}-${anime.startDate.day || "01"}`,
+        popularityRank: anime.popularity || 0,
+        rating: "N/A" // AniList no tiene un rating específico en esta consulta
+      }));
+    },
     truncateTitle(title) {
       return title.length > 30 ? title.slice(0, 40) + "..." : title;
     },
@@ -179,8 +230,9 @@ export default {
         this.filteredAnimes = [...this.allAnimes]
           .sort((a, b) => a.popularityRank - b.popularityRank)
           .slice(0, 14);
+      } else if (type === 'anticipated') {
+        this.filteredAnimes = this.anticipatedAnimes;
       } else if (type === 'airing') {
-        console.log("Filtrando en emisión:", this.popularAiringAnimes);
         this.filteredAnimes = this.popularAiringAnimes;
       }
     },
@@ -191,13 +243,11 @@ export default {
 
       const button = event.target;
       button.classList.add('selected');
-
-      const filterType = button.getAttribute('data-filter-type');
-      this.filterAnimes(filterType);
     }
   }
 };
 </script>
+
 
 
 
@@ -581,7 +631,7 @@ footer p {
 .filter-buttons button {
   
   font-size: 14px; /* Reduce el tamaño de fuente */
-  margin: 0 10px; /* Espacio entre botones */
+  margin: 1px; /* Espacio entre botones */
   padding: 8px 15px; /* Ajusta el tamaño del botón */
   background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
   color: white; /* Color del texto */
