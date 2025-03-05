@@ -163,7 +163,7 @@ export default {
     formatAnimes(animes) {
   return animes.map((anime) => ({
     id: anime.id,
-    title: this.truncateTitle(anime.attributes.canonicalTitle), // Limita el título a 20 caracteres
+    title: this.truncateTitle(anime.attributes.canonicalTitle),
     description: anime.attributes.description,
     status: anime.attributes.status,
     image: anime.attributes.posterImage.large,
@@ -172,11 +172,12 @@ export default {
       : "",
     url: `https://kitsu.app/anime/${anime.id}`,
     shortDescription: this.truncateDescription(anime.attributes.description),
-    createdAt: anime.attributes.createdAt, // Añadido para filtrar por fecha
-    popularityRank: anime.attributes.popularityRank, // Añadido para ordenar
-    rating: anime.attributes.averageRating || "N/A" // Obtiene la valoración
+    startDate: anime.attributes.startDate || "1900-01-01", // Usamos un valor por defecto
+    popularityRank: anime.attributes.popularityRank,
+    rating: anime.attributes.averageRating || "N/A"
   }));
 },
+
 truncateTitle(title) {
   return title.length > 30 ? title.slice(0, 40) + "..." : title; // Limita el título a 20 caracteres
 },
@@ -189,22 +190,22 @@ truncateTitle(title) {
       window.open(url, "_blank"); // Redirige a la página del anime en Kitsu
     },
     filterAnimes(type) {
-      if (type === 'all') {
-        // Mostrar todos los animes
-        this.filteredAnimes = this.allAnimes; // Muestra todos los 42 animes
-      } else if (type === 'recent') {
-        this.filteredAnimes = [...this.allAnimes]
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 14);
-      } else if (type === 'popular') {
-        this.filteredAnimes = [...this.allAnimes]
-          .sort((a, b) => a.popularityRank - b.popularityRank)
-          .slice(0, 14);
-      } else if (type === 'airing') {
-        // Mostrar los animes más populares en emisión
-        this.filteredAnimes = this.popularAiringAnimes; // Usar la lista de animes populares en emisión
-      }
-    },
+  if (type === 'all') {
+    this.filteredAnimes = this.allAnimes;
+  } else if (type === 'recent') {
+    this.filteredAnimes = [...this.allAnimes]
+      .filter(anime => anime.startDate !== "1900-01-01") // Filtramos los que no tienen fecha
+      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate)) // Ordenamos por fecha de inicio
+      .slice(0, 14);
+  } else if (type === 'popular') {
+    this.filteredAnimes = [...this.allAnimes]
+      .sort((a, b) => a.popularityRank - b.popularityRank)
+      .slice(0, 14);
+  } else if (type === 'airing') {
+    this.filteredAnimes = this.popularAiringAnimes;
+  }
+}
+,
     async fetchPopularAiringAnimes() {
       try {
         const response = await axios.get(`https://kitsu.app/api/edge/anime?page[limit]=14&filter[status]=current&sort=popularityRank`);
