@@ -3,25 +3,26 @@
     <header class="navbar"></header>
 
     <!-- Imagen de portada -->
-<div class="cover-image">
-  <img 
-    src="@/assets/cover-image.png" 
-    alt="Imagen de Portada" 
-    class="cover-image-img" 
-    @click="reloadPage"
-    style="cursor: pointer;" 
-  />
-</div>
-<h1>Encuentra los <span class="morado">Animes</span> en tendencia</h1>
-
+    <div class="cover-image">
+      <img 
+        src="@/assets/cover-image.png" 
+        alt="Imagen de Portada" 
+        class="cover-image-img" 
+        @click="reloadPage"
+        style="cursor: pointer;" 
+      />
+    </div>
+    <h1>Encuentra los <span class="morado">Animes</span> en tendencia</h1>
 
     <!-- Barra de filtrado -->
     <div class="filter-buttons">
       <button @click="filterAnimes('all')" data-filter-type="all">Todos</button>
-            <!-- Barra de búsqueda -->
-    <div class="search-bar">
-      <input type="text" v-model="searchQuery" @input="searchAnimes" placeholder="Buscador de anime..." />
-    </div>
+
+      <!-- Barra de búsqueda -->
+      <div class="search-bar">
+        <input type="text" v-model="searchQuery" @input="searchAnimes" placeholder="Buscador de anime..." />
+      </div>
+
       <div class="right-buttons">
         <button @click="filterAnimes('recent')" data-filter-type="recent">Más Recientes</button>
         <button @click="filterAnimes('popular')" data-filter-type="popular">Más Populares</button>
@@ -55,25 +56,6 @@
             </div>
           </div>
         </div>
-
-        <div
-          v-for="anime in popularAiringAnimes"
-          :key="anime.id"
-          class="anime-card"
-          @mouseover="hover = true"
-          @mouseleave="hover = false"
-          @click="redirectToKitsu(anime.url)"
-        >
-          <div class="anime-card-content">
-            <img :src="anime.image" alt="Imagen del Anime" class="anime-image" />
-            <div v-if="hover" class="anime-hover">
-              <video :src="anime.previewVideo" autoplay loop muted class="anime-preview"></video>
-            </div>
-            <div class="anime-info">
-              <h3>{{ anime.title }}</h3>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -83,25 +65,25 @@
   </div>
 </template>
 
-
 <script>
 import axios from "axios";
 
 export default {
   data() {
     return {
-      allAnimes: [], // Lista de todos los animes recuperados
+      allAnimes: [], // Lista de todos los animes
       loading: true,
       hover: false,
-      currentYear: new Date().getFullYear(), // Año dinámico
-      filteredAnimes: [], // Lista de animes que se mostrarán según el filtro
+      currentYear: new Date().getFullYear(),
+      filteredAnimes: [], // Lista filtrada según el usuario
       popularAiringAnimes: [], // Lista de los 14 animes más populares en emisión
       searchQuery: ""
     };
   },
-  mounted() {
-    this.fetchAnimes();
-    this.fetchPopularAiringAnimes(); // Obtener los animes más populares en emisión al montar
+  async mounted() {
+    await this.fetchAnimes();
+    await this.fetchPopularAiringAnimes();
+    this.filterAnimes('all');
 
     // Añadir event listener para los botones de filtro
     document.querySelectorAll('.filter-buttons button').forEach(button => {
@@ -111,43 +93,42 @@ export default {
   methods: {
     async fetchAnimes() {
       try {
-        const requests = []; // Arreglo para guardar las promesas de las solicitudes
-
-        // Haremos tres solicitudes para obtener suficientes animes (42 animes)
+        const requests = [];
         const numRequests = 3;
 
         for (let i = 0; i < numRequests; i++) {
           requests.push(
-            axios.get(`https://kitsu.app/api/edge/anime?page[limit]=20&page[offset]=${i * 20}`)
+            axios.get(`https://kitsu.io/api/edge/anime?page[limit]=20&page[offset]=${i * 20}`)
           );
         }
 
-        // Esperar a que todas las solicitudes se completen
         const responses = await Promise.all(requests);
 
-        // Combinar los resultados
         const totalAnimes = [];
         responses.forEach(response => {
           totalAnimes.push(...this.formatAnimes(response.data.data));
         });
 
-        // Guardar todos los animes
-        this.allAnimes = totalAnimes.slice(0, 42); // Asegurarse de tener solo 42 animes
-
-        // Mostrar por defecto todos los animes
-        this.filterAnimes('all');
-
-        // Cambiar el estado de carga
+        this.allAnimes = totalAnimes.slice(0, 42);
         this.loading = false;
       } catch (error) {
         console.error("Error al obtener los animes:", error);
         this.loading = false;
       }
     },
+    async fetchPopularAiringAnimes() {
+      try {
+        const response = await axios.get(`https://kitsu.io/api/edge/anime?filter[status]=current&sort=popularityRank&page[limit]=14`);
+        console.log("Animes en emisión:", response.data.data); // Verifica si la API devuelve datos
+        this.popularAiringAnimes = this.formatAnimes(response.data.data);
+      } catch (error) {
+        console.error("Error al obtener los animes populares en emisión:", error);
+      }
+    },
     reloadPage() {
-    window.scrollTo(0, 0); // Mueve la página al inicio
-    location.reload(); // Recarga la página
-  },
+      window.scrollTo(0, 0);
+      location.reload();
+    },
     async searchAnimes() {
       if (!this.searchQuery.trim()) {
         this.filterAnimes('all');
@@ -161,76 +142,63 @@ export default {
       }
     },
     formatAnimes(animes) {
-  return animes.map((anime) => ({
-    id: anime.id,
-    title: this.truncateTitle(anime.attributes.canonicalTitle),
-    description: anime.attributes.description,
-    status: anime.attributes.status,
-    image: anime.attributes.posterImage.large,
-    previewVideo: anime.attributes.youtubeVideoId
-      ? `https://www.youtube.com/embed/${anime.attributes.youtubeVideoId}`
-      : "",
-    url: `https://kitsu.app/anime/${anime.id}`,
-    shortDescription: this.truncateDescription(anime.attributes.description),
-    startDate: anime.attributes.startDate || "1900-01-01", // Usamos un valor por defecto
-    popularityRank: anime.attributes.popularityRank,
-    rating: anime.attributes.averageRating || "N/A"
-  }));
-},
-
-truncateTitle(title) {
-  return title.length > 30 ? title.slice(0, 40) + "..." : title; // Limita el título a 20 caracteres
-},
-
+      return animes.map((anime) => ({
+        id: anime.id,
+        title: this.truncateTitle(anime.attributes.canonicalTitle),
+        description: anime.attributes.description,
+        status: anime.attributes.status,
+        image: anime.attributes.posterImage.large,
+        previewVideo: anime.attributes.youtubeVideoId
+          ? `https://www.youtube.com/embed/${anime.attributes.youtubeVideoId}`
+          : "",
+        url: `https://kitsu.app/anime/${anime.id}`,
+        shortDescription: this.truncateDescription(anime.attributes.description),
+        startDate: anime.attributes.startDate || "1900-01-01",
+        popularityRank: anime.attributes.popularityRank,
+        rating: anime.attributes.averageRating || "N/A"
+      }));
+    },
+    truncateTitle(title) {
+      return title.length > 30 ? title.slice(0, 40) + "..." : title;
+    },
     truncateDescription(description) {
-      const truncated = description.slice(0, 30) + "...";
-      return truncated;
+      return description ? description.slice(0, 30) + "..." : "Sin descripción";
     },
     redirectToKitsu(url) {
-      window.open(url, "_blank"); // Redirige a la página del anime en Kitsu
+      window.open(url, "_blank");
     },
     filterAnimes(type) {
-  if (type === 'all') {
-    this.filteredAnimes = this.allAnimes;
-  } else if (type === 'recent') {
-    this.filteredAnimes = [...this.allAnimes]
-      .filter(anime => anime.startDate !== "1900-01-01") // Filtramos los que no tienen fecha
-      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate)) // Ordenamos por fecha de inicio
-      .slice(0, 14);
-  } else if (type === 'popular') {
-    this.filteredAnimes = [...this.allAnimes]
-      .sort((a, b) => a.popularityRank - b.popularityRank)
-      .slice(0, 14);
-  } else if (type === 'airing') {
-    this.filteredAnimes = this.popularAiringAnimes;
-  }
-}
-,
-    async fetchPopularAiringAnimes() {
-      try {
-        const response = await axios.get(`https://kitsu.app/api/edge/anime?page[limit]=14&filter[status]=current&sort=popularityRank`);
-        this.popularAiringAnimes = this.formatAnimes(response.data.data); // Formatear y guardar los 14 animes más populares en emisión
-      } catch (error) {
-        console.error("Error al obtener los animes populares en emisión:", error);
+      if (type === 'all') {
+        this.filteredAnimes = this.allAnimes;
+      } else if (type === 'recent') {
+        this.filteredAnimes = [...this.allAnimes]
+          .filter(anime => anime.startDate !== "1900-01-01")
+          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+          .slice(0, 14);
+      } else if (type === 'popular') {
+        this.filteredAnimes = [...this.allAnimes]
+          .sort((a, b) => a.popularityRank - b.popularityRank)
+          .slice(0, 14);
+      } else if (type === 'airing') {
+        console.log("Filtrando en emisión:", this.popularAiringAnimes);
+        this.filteredAnimes = this.popularAiringAnimes;
       }
     },
     onButtonClick(event) {
-      // Eliminar la clase 'selected' de todos los botones
       document.querySelectorAll('.filter-buttons button').forEach(button => {
         button.classList.remove('selected');
       });
 
-      // Agregar la clase 'selected' al botón clicado
       const button = event.target;
       button.classList.add('selected');
-      
-      // Aplica el filtro correspondiente
-      const filterType = button.getAttribute('data-filter-type'); // Si usas data-filter-type en los botones
-      this.filterAnimes(filterType); // Aplica el filtro correspondiente
+
+      const filterType = button.getAttribute('data-filter-type');
+      this.filterAnimes(filterType);
     }
   }
 };
 </script>
+
 
 
 <style scoped>
