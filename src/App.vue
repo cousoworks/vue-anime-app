@@ -469,6 +469,11 @@ h1 {
   font-weight: 500;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-width: 80px; /* Asegura un ancho mínimo uniforme */
 }
 
 .filter-buttons button::before {
