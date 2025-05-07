@@ -899,79 +899,75 @@ html, body {
   }
 
   .cover-image {
-  display: flex;
-  justify-content: center; /* Centra la imagen horizontalmente */
-  margin-top: 20px;
-}
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
 
-.cover-image-img {
-  width: 130%; /* Hace que la imagen se ajuste al contenedor */
-  height: auto; /* Mantiene la relación de aspecto */
-}
-/* Centrar la barra de búsqueda */
-.search-bar {
-  display: flex;
-  justify-content: center; /* Centra el contenido horizontalmente */
-  padding: 5px;  /* Reduce el padding */
-  border-radius: 10px;
+  .cover-image-img {
+    width: 130%;
+    height: auto;
+  }
   
-}
+  /* Centrar la barra de búsqueda */
+  .search-bar {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 10px;
+  }
 
-.search-bar input {
-  width: 80%;  /* Reduce el tamaño en móviles */
-  padding: 5px;  /* Reduce el padding */
-  font-size: 14px; /* Reduce el tamaño de fuente */
-  border-radius: 10px;
- 
-}
+  .search-bar input {
+    width: 80%;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
 
-
-/* Centrar los botones de filtro */
-.filter-buttons {
-  display: flex;
-  flex-wrap: wrap; /* Permite que los botones se distribuyan en varias filas */
-  justify-content: center; /* Centra los botones horizontalmente */
-  background-color: rgba(117, 21, 141, 0.158); /* Fondo oscuro para resaltar el texto */
-  border-radius: 10px;
-  box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2); /* Sombra sutil */
-  color: white;
-  max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
-  margin: 5px;
-  padding: 5px;
+  /* Centrar los botones de filtro */
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: rgba(117, 21, 141, 0.158);
+    border-radius: 10px;
+    box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2);
+    color: white;
+    max-width: 97.5rem;
+    margin: 5px auto; /* Añadido auto para centrar horizontalmente */
+    padding: 5px;
+  }
   
-}
-.filter-buttons button {
-  
-  font-size: 14px; /* Reduce el tamaño de fuente */
-  margin: 1px; /* Espacio entre botones */
-  padding: 8px 15px; /* Ajusta el tamaño del botón */
-  background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
-  color: white; /* Color del texto */
-  border: none; /* Sin borde */
-  border-radius: 20px; /* Bordes redondeados */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-  transition: background-color 0.3s ease, 
-  
-}
+  .filter-buttons button {
+    font-size: 14px;
+    margin: 1px;
+    padding: 8px 15px;
+    background-color: #9e6e9e1f;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
 
-.filter-buttons button:active {
-  background-color: #4c0e64; /* Color del botón cuando está presionado */
-}
+  .filter-buttons button:active {
+    background-color: #4c0e64;
+  }
 
-.filter-buttons button.selected {
-  background-color: #500772; /* Azul más oscuro cuando está marcado */
-  border: 2px solid #c4a2c7; /* Borde azul claro para mostrar que está seleccionado */
-  font-size: 14px; /* Reduce el tamaño de fuente */
-}
+  .filter-buttons button.selected {
+    background-color: #500772;
+    border: 2px solid #c4a2c7;
+    font-size: 14px;
+  }
 
-.filter-buttons button.selected:hover {
-  background-color: #390c4b; /* Mantiene el color cuando se pasa el ratón sobre el botón seleccionado */
-}
+  .filter-buttons button.selected:hover {
+    background-color: #390c4b;
+  }
 
-.right-buttons {
-  display: flex;
-  justify-content: flex-end; /* Alinea los botones a la derecha */
-}
+  .right-buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
 
   #app {
     background-size: cover;
@@ -982,15 +978,18 @@ html, body {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* Tres columnas en móvil */
     gap: 10px;
-    justify-items: center; /* Centrar las tarjetas */
-    justify-content: center; /* Asegura que todo el grid esté centrado */
+    width: 100%;
+    max-width: 100%;
     padding: 10px;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    margin: 0 auto; /* Centra el contenedor */
   }
 
   .anime-card {
-    width: 100%;
+    width: 100%; /* Ocupa todo el espacio disponible en la celda */
     aspect-ratio: 2 / 3.5;
     margin-bottom: 0;
+    justify-self: center; /* Centra la tarjeta dentro de su celda */
   }
 
   .anime-image {
@@ -1006,11 +1005,12 @@ html, body {
     font-size: 14px;
     -webkit-line-clamp: 2;
   }
+  
   footer {
-    position: relative; /* Asegura que esté en la parte inferior */
+    position: relative;
     bottom: 0;
     width: 100%;
-}
+  }
 }
 </style>
 
