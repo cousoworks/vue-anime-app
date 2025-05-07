@@ -253,21 +253,44 @@ export default {
       window.open(url, "_blank");
     },
     filterAnimes(type) {
-      if (type === 'all') {
-        this.filteredAnimes = this.allAnimes;
-      } else if (type === 'recent') {
-        this.filteredAnimes = [...this.allAnimes]
-          .filter(anime => anime.startDate !== "1900-01-01")
-          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-          .slice(0, 14);
-      } else if (type === 'popular') {
-        this.filteredAnimes = [...this.allAnimes]
-          .sort((a, b) => a.popularityRank - b.popularityRank)
-          .slice(0, 14);
-      } else if (type === 'anticipated') {
-        this.filteredAnimes = this.anticipatedAnimes;
-      } else if (type === 'airing') {
-        this.filteredAnimes = this.popularAiringAnimes;
+      // Guardar el contenedor y eliminar las tarjetas actuales
+      const container = document.querySelector('.anime-container');
+      if (container) {
+        // Aplicar una pequeña animación de desvanecimiento al contenedor
+        container.style.opacity = '0';
+        container.style.transform = 'scale(0.97)';
+        
+        setTimeout(() => {
+          // Actualizar los datos después de la animación de salida
+          if (type === 'all') {
+            this.filteredAnimes = this.allAnimes;
+          } else if (type === 'recent') {
+            this.filteredAnimes = [...this.allAnimes]
+              .filter(anime => anime.startDate !== "1900-01-01")
+              .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+              .slice(0, 14);
+          } else if (type === 'popular') {
+            this.filteredAnimes = [...this.allAnimes]
+              .sort((a, b) => a.popularityRank - b.popularityRank)
+              .slice(0, 14);
+          } else if (type === 'anticipated') {
+            this.filteredAnimes = this.anticipatedAnimes;
+          } else if (type === 'airing') {
+            this.filteredAnimes = this.popularAiringAnimes;
+          }
+          
+          // Restaurar la visibilidad después de actualizar los datos
+          this.$nextTick(() => {
+            container.style.opacity = '1';
+            container.style.transform = 'scale(1)';
+            
+            // Aplicar la animación de entrada a cada tarjeta con retraso escalonado
+            const cards = document.querySelectorAll('.anime-card');
+            cards.forEach((card, index) => {
+              card.style.animationDelay = `${index * 0.05}s`;
+            });
+          });
+        }, 300); // Tiempo suficiente para la animación de salida
       }
     },
     onButtonClick(event) {
@@ -357,72 +380,135 @@ h1 {
 
 .search-bar {
   display: flex;
-  justify-content: flex-start; /* Alinea los elementos a la izquierda */
-  align-items: center; /* Centra verticalmente los elementos */
-  width: 100%; /* Asegura que ocupe el ancho completo del contenedor */
-  
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
 }
 
 .search-bar input {
-  color: white; /* Color del texto ingresado */
-  width: 15rem;
-  padding: 10px;
+  color: white;
+  width: 20rem;
+  padding: 12px 20px 12px 45px;
   font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #00000000;
-  background-color: rgba(178, 113, 194, 0.158); /* Fondo oscuro para resaltar el texto */
+  border-radius: 30px;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  background: rgba(30, 10, 60, 0.2);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.search-bar::before {
+  
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+  width: 22rem;
+  border-color: rgba(138, 43, 226, 0.6);
+  box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3), inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.search-bar input:focus + .search-bar::before {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-5px);
 }
 
 .search-bar input::placeholder {
-  color: white; /* Cambia el color del texto del placeholder a blanco */
-  opacity: 1; /* Asegura que el color se vea bien en algunos navegadores */
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.search-bar input:focus::placeholder {
+  opacity: 0.5;
 }
 
 
 .filter-buttons {
   display: flex;
-  justify-content: space-between; /* Distribuir los botones entre la izquierda y la derecha */
-  margin: 20px;
-  padding: 20px;
-  background-color: rgba(178, 113, 194, 0.158); /* Fondo oscuro para resaltar el texto */
-  border-radius: 10px;
-  box-shadow: 0 4px 4px rgba(92, 92, 92, 0.2); /* Sombra sutil */
+  justify-content: space-between;
+  margin: 20px auto;
+  padding: 16px 24px;
+  background: rgba(30, 10, 60, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(138, 43, 226, 0.2);
   color: white;
-  max-width: 97.5rem; /* Limitar el tamaño para que no se vea tan grande */
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 97.5rem;
+  position: relative;
+  z-index: 10;
+  transition: all 0.4s ease;
+}
+
+.filter-buttons:hover {
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(138, 43, 226, 0.3);
 }
 
 .filter-buttons button {
-  font-size: 14px; /* Aumenta el tamaño del texto */
-  margin: 0 10px; /* Espacio entre botones */
-  padding: 8px 15px; /* Ajusta el tamaño del botón */
-  background-color: #9e6e9e1f; /* Color de fondo azul oscuro */
-  color: white; /* Color del texto */
-  border: none; /* Sin borde */
-  border-radius: 20px; /* Bordes redondeados */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Transición suave */
+  font-size: 15px;
+  margin: 0 6px;
+  padding: 10px 18px;
+  background: rgba(80, 20, 120, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.filter-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: all 0.6s ease;
+}
 
 .filter-buttons button:hover {
-  background-color: #5f0f77; /* Color del botón al pasar el mouse */
-  transform: scale(1.05); /* Aumenta ligeramente el tamaño del botón */
+  background: rgba(120, 40, 180, 0.5);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.filter-buttons button:hover::before {
+  left: 100%;
 }
 
 .filter-buttons button:active {
-  background-color: #4c0e64; /* Color del botón cuando está presionado */
-  transform: scale(1); /* Mantiene el tamaño original cuando se hace clic */
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .filter-buttons button.selected {
-  background-color: #500772; /* Azul más oscuro cuando está marcado */
-  border: 2px solid #c4a2c7; /* Borde azul claro para mostrar que está seleccionado */
+  background: linear-gradient(135deg, #9b4dca, #6200ea);
+  color: white;
+  box-shadow: 0 6px 15px rgba(155, 77, 202, 0.4);
+  font-weight: 600;
 }
 
 .filter-buttons button.selected:hover {
-  background-color: #390c4b; /* Mantiene el color cuando se pasa el ratón sobre el botón seleccionado */
+  background: linear-gradient(135deg, #9b4dca, #6200ea);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(155, 77, 202, 0.5);
 }
 
 .right-buttons {
@@ -569,6 +655,23 @@ html, body {
   backdrop-filter: blur(5px); /* Efecto de cristal */
   text-align: center;
   margin-bottom: 15px;
+  /* Añadir animación de entrada */
+  animation: cardAppear 0.6s cubic-bezier(0.26, 1.04, 0.54, 1);
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  animation-fill-mode: forwards;
+}
+
+/* Animación para la aparición de tarjetas */
+@keyframes cardAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .anime-card::after {
@@ -843,6 +946,7 @@ html, body {
   border-radius: 20px; /* Bordes redondeados */
   cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
   transition: background-color 0.3s ease, 
+  
 }
 
 .filter-buttons button:active {
