@@ -67,7 +67,48 @@
     </div>
 
     <footer>
-      <p>© {{ currentYear }} Blayneraptor</p>
+      <div class="footer-container">
+        <div class="footer-logo">
+          <div class="logo-text">AnimeFind</div>
+          <div class="footer-tagline">Descubre y explora el mundo del anime</div>
+        </div>
+        
+        <div class="footer-links">
+          <div class="footer-link-group">
+            <h4>Enlaces</h4>
+            <a href="#" @click.prevent="scrollToTopAndFilter('all')">Inicio</a>
+            <a href="#" @click.prevent="scrollToTopAndFilter('popular')">Populares</a>
+            <a href="#" @click.prevent="scrollToTopAndFilter('airing')">En Emisión</a>
+          </div>
+          
+          <div class="footer-link-group">
+            <h4>Recursos</h4>
+            <a href="https://kitsu.io" target="_blank">Kitsu API</a>
+            <a href="https://anilist.co" target="_blank">AniList</a>
+            <a href="https://myanimelist.net" target="_blank">MyAnimeList</a>
+          </div>
+        </div>
+        
+        <div class="footer-social">
+          <h4>Síguenos</h4>
+          <div class="social-icons">
+            <a href="#" class="social-icon" title="Twitter">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.633 7.997c.013.175.013.349.013.523 0 5.325-4.053 11.461-11.46 11.461-2.282 0-4.402-.661-6.186-1.809.324.037.636.05.973.05a8.07 8.07 0 0 0 5.001-1.721 4.036 4.036 0 0 1-3.767-2.793c.249.037.499.062.761.062.361 0 .724-.05 1.061-.137a4.027 4.027 0 0 1-3.23-3.953v-.05c.537.299 1.16.486 1.82.511a4.022 4.022 0 0 1-1.796-3.354c0-.748.199-1.434.548-2.032a11.457 11.457 0 0 0 8.306 4.215c-.062-.3-.1-.611-.1-.923a4.026 4.026 0 0 1 4.028-4.028c1.16 0 2.207.486 2.943 1.272a7.957 7.957 0 0 0 2.556-.973 4.02 4.02 0 0 1-1.771 2.22 8.073 8.073 0 0 0 2.319-.624 8.645 8.645 0 0 1-2.019 2.083z"></path></svg>
+            </a>
+            <a href="#" class="social-icon" title="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.999 7.377a4.623 4.623 0 1 0 0 9.248 4.623 4.623 0 0 0 0-9.248zm0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008z"></path><circle cx="16.806" cy="7.207" r="1.078"></circle><path d="M20.533 6.111A4.605 4.605 0 0 0 17.9 3.479a6.606 6.606 0 0 0-2.186-.42c-.963-.042-1.268-.054-3.71-.054s-2.755 0-3.71.054a6.554 6.554 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.585 6.585 0 0 0-.419 2.186c-.043.962-.056 1.267-.056 3.71 0 2.442 0 2.753.056 3.71.015.748.156 1.486.419 2.187a4.61 4.61 0 0 0 2.634 2.632 6.584 6.584 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.615 6.615 0 0 0 2.186-.419 4.613 4.613 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.581 6.581 0 0 0-.421-2.217zm-1.218 9.532a5.043 5.043 0 0 1-.311 1.688 2.987 2.987 0 0 1-1.712 1.711 4.985 4.985 0 0 1-1.67.311c-.95.044-1.218.055-3.654.055-2.438 0-2.687 0-3.655-.055a4.96 4.96 0 0 1-1.669-.311 2.985 2.985 0 0 1-1.719-1.711 5.08 5.08 0 0 1-.311-1.669c-.043-.95-.053-1.218-.053-3.654 0-2.437 0-2.686.053-3.655a5.038 5.038 0 0 1 .311-1.687c.305-.789.93-1.41 1.719-1.712a5.01 5.01 0 0 1 1.669-.311c.951-.043 1.218-.055 3.655-.055s2.687 0 3.654.055a4.96 4.96 0 0 1 1.67.311 2.991 2.991 0 0 1 1.712 1.712 5.08 5.08 0 0 1 .311 1.669c.043.951.054 1.218.054 3.655 0 2.436 0 2.698-.043 3.654h-.011z"></path></svg>
+            </a>
+            <a href="#" class="social-icon" title="Discord">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14.82 4.26a10.14 10.14 0 0 0-.53 1.1 14.66 14.66 0 0 0-4.58 0 10.14 10.14 0 0 0-.53-1.1 16 16 0 0 0-4.13 1.3 17.33 17.33 0 0 0-3 11.59 16.6 16.6 0 0 0 5.07 2.59A12.89 12.89 0 0 0 8.23 18a9.65 9.65 0 0 1-1.71-.83 3.39 3.39 0 0 0 .42-.33 11.66 11.66 0 0 0 10.12 0q.21.18.42.33a10.84 10.84 0 0 1-1.71.84 12.41 12.41 0 0 0 1.08 1.78 16.44 16.44 0 0 0 5.06-2.59 17.22 17.22 0 0 0-3-11.59 16.09 16.09 0 0 0-4.09-1.35zM8.68 14.81a1.94 1.94 0 0 1-1.8-2 1.93 1.93 0 0 1 1.8-2 1.93 1.93 0 0 1 1.8 2 1.93 1.93 0 0 1-1.8 2zm6.64 0a1.94 1.94 0 0 1-1.8-2 1.93 1.93 0 0 1 1.8-2 1.92 1.92 0 0 1 1.8 2 1.92 1.92 0 0 1-1.8 2z"></path></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <div class="copyright">© {{ currentYear }} <span class="highlight">Blayneraptor</span></div>
+        <div class="footer-note">Hecho con <span class="heart">♥</span> para los fans del anime</div>
+      </div>
     </footer>
   </div>
 </template>
@@ -324,6 +365,22 @@ export default {
         default:
           return 'Desconocido';
       }
+    },
+    scrollToTopAndFilter(type) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.filterAnimes(type);
+      
+      // También actualizar la selección visual del botón
+      this.$nextTick(() => {
+        document.querySelectorAll('.filter-buttons button').forEach(button => {
+          button.classList.remove('selected');
+          
+          // Seleccionar el botón correspondiente
+          if (button.getAttribute('data-filter-type') === type) {
+            button.classList.add('selected');
+          }
+        });
+      });
     }
   }
 };
@@ -890,6 +947,261 @@ html, body {
   background: rgba(187, 134, 252, 0.6);
   transform: translateY(-2px);
   box-shadow: 0 2px 5px rgba(187, 134, 252, 0.3);
+}
+
+footer {
+  background: linear-gradient(to bottom, rgba(20, 10, 30, 0.8), rgba(30, 15, 50, 0.95));
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(138, 43, 226, 0.3);
+  padding: 40px 20px 20px;
+  margin-top: 60px;
+  position: relative;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #9b4dca, #bb86fc, transparent);
+  animation: glowLine 6s linear infinite;
+}
+
+@keyframes glowLine {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.3; }
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto 30px;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.footer-logo {
+  flex: 1;
+  min-width: 200px;
+  text-align: left;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #9b4dca, #bb86fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+.logo-text::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: #9b4dca;
+  border-radius: 3px;
+}
+
+.footer-tagline {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin-top: 15px;
+  max-width: 250px;
+  line-height: 1.5;
+}
+
+.footer-links {
+  display: flex;
+  gap: 40px;
+  flex: 2;
+  justify-content: center;
+}
+
+.footer-link-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-link-group h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  position: relative;
+  color: #bb86fc;
+}
+
+.footer-link-group a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  margin-bottom: 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 0;
+}
+
+.footer-link-group a:hover {
+  color: #bb86fc;
+  transform: translateX(5px);
+}
+
+.footer-link-group a::before {
+  content: '•';
+  position: absolute;
+  left: -10px;
+  top: 0;
+  opacity: 0;
+  color: #bb86fc;
+  transition: all 0.3s ease;
+}
+
+.footer-link-group a:hover::before {
+  opacity: 1;
+  left: -15px;
+}
+
+.footer-social {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-social h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #bb86fc;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(155, 77, 202, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(155, 77, 202, 0.3);
+}
+
+.social-icon:hover {
+  background: rgba(155, 77, 202, 0.4);
+  color: #ffffff;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(155, 77, 202, 0.3);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(155, 77, 202, 0.2);
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.copyright {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.highlight {
+  color: #bb86fc;
+  font-weight: 600;
+}
+
+.footer-note {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.heart {
+  color: #ff5e8a;
+  display: inline-block;
+  font-size: 16px;
+  animation: heartbeat 1.5s ease infinite;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-logo {
+    text-align: center;
+  }
+  
+  .logo-text::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-tagline {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .footer-links {
+    width: 100%;
+    justify-content: space-around;
+  }
+  
+  .footer-link-group {
+    align-items: center;
+  }
+  
+  .footer-social {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-link-group a:hover {
+    transform: translateX(0) scale(1.05);
+  }
+  
+  .footer-link-group a::before {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
