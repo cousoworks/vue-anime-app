@@ -48,6 +48,12 @@
           @click="redirectToKitsu(anime.url)"
         >
           <div class="anime-card-content">
+            <div class="anime-status" :class="getStatusClass(anime.status)">
+              {{ getStatusText(anime.status) }}
+            </div>
+            <div v-if="anime.rating !== 'N/A'" class="anime-rating">
+              {{ anime.rating }}
+            </div>
             <img :src="anime.image" alt="Imagen del Anime" class="anime-image" />
             <div v-if="hover" class="anime-hover">
               <video :src="anime.previewVideo" autoplay loop muted class="anime-preview"></video>
@@ -101,7 +107,7 @@ export default {
 
         for (let i = 0; i < numRequests; i++) {
           requests.push(
-            axios.get(`https://kitsu.io/api/edge/anime?page[limit]=20&page[offset]=${i * 20}`)
+            axios.get(`https://kitsu.io/api/edge/anime?page[limit]=20&page[offset]=${i * 20}&include=categories`)
           );
         }
 
@@ -121,8 +127,8 @@ export default {
     },
     async fetchPopularAiringAnimes() {
       try {
-        const response = await axios.get(`https://kitsu.io/api/edge/anime?filter[status]=current&sort=popularityRank&page[limit]=14`);
-        console.log("Animes en emisión:", response.data.data); // Verifica si la API devuelve datos
+        const response = await axios.get(`https://kitsu.io/api/edge/anime?filter[status]=current&sort=popularityRank&page[limit]=14&include=categories`);
+        console.log("Animes en emisión:", response.data.data);
         this.popularAiringAnimes = this.formatAnimes(response.data.data);
       } catch (error) {
         console.error("Error al obtener los animes populares en emisión:", error);
@@ -148,9 +154,22 @@ export default {
                     month
                     day
                   }
+                  endDate {
+                    year
+                    month
+                    day
+                  }
+                  status
+                  season
+                  seasonYear
+                  format
+                  episodes
+                  duration
                   popularity
+                  averageScore
                   description
                   genres
+                  meanScore
                 }
               }
             }`
@@ -171,7 +190,7 @@ export default {
         return;
       }
       try {
-        const response = await axios.get(`https://kitsu.io/api/edge/anime?filter[text]=${this.searchQuery}`);
+        const response = await axios.get(`https://kitsu.io/api/edge/anime?filter[text]=${this.searchQuery}&include=categories`);
         this.filteredAnimes = this.formatAnimes(response.data.data);
       } catch (error) {
         console.error("Error al buscar el anime:", error);
@@ -191,7 +210,8 @@ export default {
         shortDescription: this.truncateDescription(anime.attributes.description),
         startDate: anime.attributes.startDate || "1900-01-01",
         popularityRank: anime.attributes.popularityRank,
-        rating: anime.attributes.averageRating || "N/A"
+        rating: anime.attributes.averageRating || "N/A",
+        genres: anime.attributes.categories ? anime.attributes.categories.map(cat => cat.title).slice(0, 3) : []
       }));
     },
     formatAnimesAniList(animes) {
@@ -199,15 +219,29 @@ export default {
         id: anime.id,
         title: this.truncateTitle(anime.title.romaji || anime.title.english),
         description: anime.description || "Sin descripción",
-        status: anime.status || "Desconocido",
+        status: this.mapAniListStatus(anime.status || "UNKNOWN"),
         image: anime.coverImage.large,
         previewVideo: "",  // AniList no devuelve un preview de video en la API
         url: `https://anilist.co/anime/${anime.id}`,
         shortDescription: this.truncateDescription(anime.description),
         startDate: `${anime.startDate.year || "1900"}-${anime.startDate.month || "01"}-${anime.startDate.day || "01"}`,
         popularityRank: anime.popularity || 0,
-        rating: "N/A" // AniList no tiene un rating específico en esta consulta
+        rating: anime.averageScore ? anime.averageScore.toString() : "N/A",
+        genres: anime.genres || []
       }));
+    },
+    mapAniListStatus(status) {
+      // Convierte los estados de AniList al formato de Kitsu
+      switch (status) {
+        case "RELEASING":
+          return "current";
+        case "FINISHED":
+          return "finished";
+        case "NOT_YET_RELEASED":
+          return "upcoming";
+        default:
+          return "unknown";
+      }
     },
     truncateTitle(title) {
       return title.length > 30 ? title.slice(0, 40) + "..." : title;
@@ -243,6 +277,30 @@ export default {
 
       const button = event.target;
       button.classList.add('selected');
+    },
+    getStatusClass(status) {
+      switch (status) {
+        case 'current':
+          return 'status-current';
+        case 'finished':
+          return 'status-finished';
+        case 'upcoming':
+          return 'status-upcoming';
+        default:
+          return 'status-unknown';
+      }
+    },
+    getStatusText(status) {
+      switch (status) {
+        case 'current':
+          return 'En Emisión';
+        case 'finished':
+          return 'Finalizado';
+        case 'upcoming':
+          return 'Próximamente';
+        default:
+          return 'Desconocido';
+      }
     }
   }
 };
@@ -496,55 +554,97 @@ html, body {
   width: 100%; /* Asegura que ocupe todo el espacio disponible */
 }
 
-
-/* Ajuste para la carta del anime */
+/* Estilo moderno y tecnológico para las tarjetas de anime */
 .anime-card {
-  aspect-ratio: 2 / 4; /* Ajusté la proporción a algo más pequeño */
-  width: calc(14.2857% - 20px); /* Ancho de las cartas (5 columnas), ajusté el margen */
-  background: linear-gradient(to bottom, white, rgb(55, 12, 83), rgba(147, 38, 161, 0.301)); /* Gradiente blanco-morado-rosa */
-
-  border-radius: 8px; /* Bordes más pequeños */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7); /* Sombra más sutil */
+  aspect-ratio: 2 / 3.2; /* Proporción más cinematográfica */
+  width: calc(14.2857% - 20px);
+  background: rgba(20, 20, 30, 0.7); /* Fondo oscuro más tecnológico */
+  border: 1px solid rgba(138, 43, 226, 0.5); /* Borde fino neón */
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(138, 43, 226, 0.25), 0 0 15px rgba(138, 43, 226, 0.1); /* Sombra neón */
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Transición más suave */
+  backdrop-filter: blur(5px); /* Efecto de cristal */
   text-align: center;
-  position: relative; /* Importante para posicionar el icono relativo */
-  margin-bottom: 15px; /* Espacio entre filas reducido */
+  margin-bottom: 15px;
+}
+
+.anime-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0) 0%, rgba(138, 43, 226, 0.1) 100%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .anime-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(138, 43, 226, 0.4), 0 0 25px rgba(138, 43, 226, 0.15);
+  border-color: rgba(138, 43, 226, 0.8);
+}
+
+.anime-card:hover::after {
+  opacity: 1;
 }
 
 .anime-card-content {
   position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .anime-image {
   width: 100%;
-  height: auto;
+  height: 75%;
+  object-fit: cover;
   border-radius: 10px 10px 0 0;
+  transition: all 0.4s ease;
+  filter: contrast(1.1) saturate(1.2); /* Aumenta el contraste y saturación */
+}
+
+.anime-card:hover .anime-image {
+  filter: contrast(1.2) saturate(1.4) brightness(1.1); /* Mejora los colores al pasar el ratón */
 }
 
 .anime-info {
-  padding: 1px;
-  
+  padding: 12px;
+  height: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(0deg, rgba(30, 10, 60, 0.9) 0%, rgba(20, 20, 30, 0.7) 100%);
+  transition: background 0.3s ease;
+}
+
+.anime-card:hover .anime-info {
+  background: linear-gradient(0deg, rgba(50, 15, 100, 0.9) 0%, rgba(30, 30, 50, 0.7) 100%);
 }
 
 .anime-info h3 {
-  font-size: 20px;
-  color: #ffffff;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
-.anime-info p {
-  color: #666;
-  font-size: 14px;
-}
-
-.anime-info p strong {
-  font-weight: bold;
+.anime-card:hover .anime-info h3 {
+  color: #bb86fc; /* Color neón al pasar el ratón */
 }
 
 .anime-hover {
@@ -556,30 +656,134 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(10, 10, 20, 0.7); /* Fondo oscuro semitransparente */
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.anime-card:hover .anime-hover {
+  opacity: 1;
 }
 
 .anime-preview {
-  width: 80%;
+  width: 90%;
   height: auto;
-  border-radius: 10px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
-footer {
-  
-  color: white;
-  padding: 10px;
-  text-align: center;
-  font-size: 14px;
-  position: relative;
-  bottom: 0;
+
+/* Añadir detalles de anime adicionales con animación */
+.anime-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  z-index: 1000;
+  height: 3px; /* Línea fina en la parte superior */
+  background: linear-gradient(90deg, #9b4dca, #6200ea, #bb86fc);
+  z-index: 3;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
 }
 
-footer p {
-  margin: 0;
+.anime-card:hover::before {
+  transform: scaleX(1);
 }
 
-/* Estilos responsivos */
+/* Añadir indicadores de rating o estado del anime */
+.anime-rating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(138, 43, 226, 0.8);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 10px;
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+.anime-card:hover .anime-rating {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.anime-status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 10px;
+  z-index: 3;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: all 0.3s ease;
+  color: white;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(2px);
+}
+
+.anime-card:hover .anime-status {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.status-current {
+  background: rgba(25, 200, 122, 0.8); /* Verde para En Emisión */
+  border: 1px solid rgba(25, 200, 122, 0.3);
+}
+
+.status-finished {
+  background: rgba(64, 114, 255, 0.8); /* Azul para Finalizado */
+  border: 1px solid rgba(64, 114, 255, 0.3);
+}
+
+.status-upcoming {
+  background: rgba(255, 165, 0, 0.8); /* Naranja para Próximamente */
+  border: 1px solid rgba(255, 165, 0, 0.3);
+}
+
+.status-unknown {
+  background: rgba(128, 128, 128, 0.8); /* Gris para Desconocido */
+  border: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.anime-genres {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.genre-tag {
+  font-size: 10px;
+  background: rgba(174, 91, 245, 0.4);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(174, 91, 245, 0.2);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+.anime-card:hover .genre-tag {
+  background: rgba(187, 134, 252, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(187, 134, 252, 0.3);
+}
+
 @media (max-width: 768px) {
   h1 {
     font-size: 24px;
@@ -667,50 +871,31 @@ footer p {
 
   .anime-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Dos columnas en móvil */
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas en móvil */
     gap: 10px;
-    justify-items: center; /* Asegura que las columnas estén centradas */
-    padding: 0 0px; /* Da espacio a los lados */
+    justify-items: center; /* Centrar las tarjetas */
+    justify-content: center; /* Asegura que todo el grid esté centrado */
+    padding: 10px;
   }
 
   .anime-card {
-  width: 100%; /* Asegura que la tarjeta ocupe todo el ancho disponible */
-  height: auto;
-  background: linear-gradient(to bottom, white, rgb(55, 12, 83), rgba(147, 38, 161, 0.301)); /* Gradiente blanco-morado-rosa */
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-  position: relative;
-  margin-bottom: 10px; /* Reduce la separación entre las filas */
-}
-
-.anime-image {
-  width: 100%; /* Hace que la imagen ocupe todo el ancho del contenedor */
-  height: 175px; /* Controla la altura de la imagen */
-  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
-  border-radius: 8px;
-}
-
-  .anime-info {
-    font-size: 8px; /* Aumenta el tamaño del texto */
+    width: 100%;
+    aspect-ratio: 2 / 3.5;
+    margin-bottom: 0;
   }
 
-  .anime-info p {
-    font-size: 8px; /* Aumenta el tamaño del texto */
-    max-height: 20px; /* Elimina la restricción de altura */
-    overflow: visible; /* Asegura que se vea todo el texto */
-    text-overflow: unset;
-    white-space: normal; /* Permite saltos de línea */
-    text-align: center;
+  .anime-image {
+    height: 70%;
+    object-fit: cover;
+  }
+
+  .anime-info {
+    height: 30%;
   }
 
   .anime-info h3 {
-    font-size: 13px;
-    color: #ffffff;
-    margin-bottom: 20px;
+    font-size: 14px;
+    -webkit-line-clamp: 2;
   }
   footer {
     position: relative; /* Asegura que esté en la parte inferior */
