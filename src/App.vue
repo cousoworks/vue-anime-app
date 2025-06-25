@@ -106,7 +106,7 @@
       </div>
       
       <div class="footer-bottom">
-        <div class="copyright">© {{ currentYear }} <span class="highlight">Blayneraptor</span></div>
+        <div class="copyright">© {{ currentYear }} <span class="highlight">cousoworks</span></div>
         <div class="footer-note">Hecho con <span class="heart">♥</span> para los fans del anime</div>
       </div>
     </footer>
